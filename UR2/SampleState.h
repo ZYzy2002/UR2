@@ -1,5 +1,6 @@
 #pragma once
 #include "Bindable.h"
+
 class SampleState : public Bindable
 {
 	ComPtr<ID3D11SamplerState> pSamplerState;

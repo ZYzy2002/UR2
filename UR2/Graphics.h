@@ -10,13 +10,13 @@
 #include "ResourceManage.h"
 #include "ViewPort.h"
 #include "RenderTargetView.h"
-#include "IGraphics.h"
+
 
 using namespace Microsoft::WRL;
 using namespace std;
 
 
-class Graphics :public IGraphics
+class Graphics 
 {
 public:
 	Graphics(HWND outputWindowHandle);
@@ -42,8 +42,7 @@ public:
 public:
 	// 图形资源管理
 	shared_ptr<ResourceManage> pRM;
-	virtual StaticMesh* FindMesh(const wstring& name) override;
-	virtual Material* FindMaterial(const wstring& name, UINT instance) override;
+
 public:
 
 	//渲染管线
@@ -53,10 +52,10 @@ public:
 	struct LightCommand { shared_ptr<ConstantBuffer> spotLightCB3; Texture2D shadowMap; };
 	list<LightCommand> spotLightCommands;
 
-	virtual void AddQueue(shared_ptr<ConstantBuffer> pModelTrans, 
-		StaticMesh* pMesh, Material* pMaterial)override;
-	virtual void SetCamera(shared_ptr<ConstantBuffer> pCameraCB2)override;
-	virtual void AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3)override;
+	void AddQueue(shared_ptr<ConstantBuffer> pModelTrans, 
+		StaticMesh* pMesh, Material* pMaterial);
+	void SetCamera(shared_ptr<ConstantBuffer> pCameraCB2);
+	void AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3);
 	void ExecuteCommands();
 };
 

@@ -6,7 +6,7 @@
 class CameraComponent : public Component
 {
 public:
-	CameraComponent(shared_ptr<Graphics> pGfx);
+	CameraComponent(Support* pSupport);
 	virtual void Tick();
 private:
 	shared_ptr<ConstantBuffer> pCameraCBuffer;	////构造时创建， 当析构且GraphicsQueue中不再引用它时，销毁

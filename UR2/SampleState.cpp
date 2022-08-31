@@ -35,7 +35,7 @@ void SampleState::Load(D3D11_TEXTURE_ADDRESS_MODE texAddressMode)
 	samplerDesc.BorderColor[0] = 0.0f;
 	samplerDesc.BorderColor[1] = 0.0f;
 	samplerDesc.BorderColor[2] = 0.0f;
-	samplerDesc.BorderColor[3] = 0.0f;
+	samplerDesc.BorderColor[3] = 1.0f;
 	samplerDesc.MinLOD = 0u;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	pDevice->CreateSamplerState(&samplerDesc, &pSamplerState);

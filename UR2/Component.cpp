@@ -6,8 +6,8 @@ Transform::Transform()
 
 }
 
-Component::Component(shared_ptr<Graphics> pGfx)
-	: pGfx{ pGfx }
+Component::Component(Support* pSupport)
+	: pSupport{pSupport}
 {
 
 }

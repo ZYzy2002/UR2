@@ -80,6 +80,7 @@ LRESULT Window::HandleMassage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	default:
+
 		;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);

@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-
+#define SHADOW_MAP_PRECISION 256.f
 
 Graphics::Graphics(HWND outputWindowHandle)
 {
@@ -70,14 +70,7 @@ Microsoft::WRL::ComPtr<ID3D11DeviceContext> Graphics::GetContext()
 	return pContext;
 }
 
-StaticMesh* Graphics::FindMesh(const wstring& name)
-{
-	return pRM->FindMesh(name);
-}
-Material* Graphics::FindMaterial(const wstring& name, UINT instance)
-{
-	return pRM->FindMaterial(name, instance);
-}
+
 
 void Graphics::AddQueue(shared_ptr<ConstantBuffer> pModelTrans, StaticMesh* pMesh, Material* pMaterial)
 {
@@ -98,7 +91,7 @@ void Graphics::ExecuteCommands()
 {
 	//shadow map
 	ViewPort renderToShadow{ pDevice, pContext };
-	renderToShadow.Load(512.f, 512.f);
+	renderToShadow.Load(SHADOW_MAP_PRECISION, SHADOW_MAP_PRECISION);
 	renderToShadow.Bind();
 	for (LightCommand& i : spotLightCommands)
 	{
@@ -110,7 +103,7 @@ void Graphics::ExecuteCommands()
 		i.spotLightCB3->SetBindSlot(2u);
 		i.spotLightCB3->Bind();
 		i.spotLightCB3->SetBindSlot(3u);
-
+		//绘制深度
 		for (MeshCommand& j : meshCommands)
 		{
 			j.pModelTransCB0->Bind();
@@ -144,9 +137,21 @@ void Graphics::ExecuteCommands()
 	screen->Bind();
 	for (MeshCommand& i : meshCommands)
 	{
-		i.pModelTransCB0->Bind();
-		i.pMaterial->Bind();
-		i.pMesh->Draw();
+		
+		for (LightCommand& j : spotLightCommands)
+		{
+			//绑定 纹理
+			ShaderResourceView temp{ pDevice,pContext };
+			temp.Load(&j.shadowMap, 0u);
+			temp.Bind();
+			pRM->FindSampler(L"Border")->Bind();
+			//绑定 灯关CB3
+			j.spotLightCB3->Bind();
+
+			i.pModelTransCB0->Bind();
+			i.pMaterial->Bind();
+			i.pMesh->Draw();
+		}
 	}
 
 	//清除

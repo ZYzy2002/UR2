@@ -9,7 +9,7 @@ class StaticMeshComponent : public Component
 {
 public:
 
-	StaticMeshComponent(shared_ptr<Graphics> pGfx);
+	StaticMeshComponent(Support* pSupport);
 	StaticMeshComponent() = delete;
 	StaticMeshComponent(const StaticMeshComponent& other) = delete;	//不允许直接浅拷贝。深拷贝没必要
 	StaticMeshComponent(const StaticMeshComponent&& other);			//vector::push_back(临时对象拷贝)

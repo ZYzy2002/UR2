@@ -2,10 +2,10 @@
 
 
 
-CameraComponent::CameraComponent(shared_ptr<Graphics> pGfx)
-	:Component(pGfx)
+CameraComponent::CameraComponent(Support* pSupport)
+	:Component(pSupport)
 {
-	pCameraCBuffer = make_shared<ConstantBuffer>(pGfx->GetDevice(), pGfx->GetContext());
+	pCameraCBuffer = make_shared<ConstantBuffer>(pSupport->pGfx->GetDevice(), pSupport->pGfx->GetContext());
 	pCameraCBuffer->LoadLayout( 2u,
 		string{ "VStoWS" }, ConstantBuffer::ParaType::MATRIX,
 		string{ "WStoVS" }, ConstantBuffer::ParaType::MATRIX,
@@ -47,5 +47,5 @@ void CameraComponent::Tick()
 	pCameraCBuffer->SetFloat4("CameraPosWS", CameraPosWS);
 	pCameraCBuffer->SetFloat4("CameraDirWS", CameraDirWS);
 
-	pGfx->SetCamera(pCameraCBuffer);
+	pSupport->pGfx->SetCamera(pCameraCBuffer);
 }

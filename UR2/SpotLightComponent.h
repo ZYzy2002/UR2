@@ -4,7 +4,7 @@
 class SpotLightComponent : public Component
 {
 public:
-	SpotLightComponent(shared_ptr<Graphics> pGfx);
+	SpotLightComponent(Support* pSupport);
 
 private:
 	shared_ptr<ConstantBuffer> lightTransCB;

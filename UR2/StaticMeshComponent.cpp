@@ -1,11 +1,11 @@
 #include "StaticMeshComponent.h"
 
 
-StaticMeshComponent::StaticMeshComponent(shared_ptr<Graphics> pGfx)
-	:Component(pGfx), pTransCBuffer{ nullptr }, pMesh{ nullptr }, pMaterial{ nullptr }
+StaticMeshComponent::StaticMeshComponent(Support* pSupport)
+	:Component(pSupport), pTransCBuffer{ nullptr }, pMesh{ nullptr }, pMaterial{ nullptr }
 {
 	pTransCBuffer = make_shared<ConstantBuffer>(
-		pGfx->GetDevice(), pGfx->GetContext());
+		pSupport->pGfx->GetDevice(), pSupport->pGfx->GetContext());
 
 	pTransCBuffer->LoadLayout(0u,
 		string{ "MStoWS" }, ConstantBuffer::ParaType::MATRIX,
@@ -19,7 +19,7 @@ StaticMeshComponent::StaticMeshComponent(shared_ptr<Graphics> pGfx)
 
 
 StaticMeshComponent::StaticMeshComponent(const StaticMeshComponent&& other)
-	:Component(other.pGfx)
+	:Component(other.pSupport)
 {
 	pTransCBuffer = other.pTransCBuffer;
 	pMesh = other.pMesh;
@@ -33,8 +33,8 @@ Material* StaticMeshComponent::GetMaterial()
 
 void StaticMeshComponent::SetMeshAndMaterial(wstring meshname, wstring materialname, UINT material_Inst)
 {
-	pMesh = pGfx->pRM->FindMesh(meshname);
-	pMaterial =pGfx->pRM->FindMaterial(materialname, material_Inst);
+	pMesh = pSupport->pGfx->pRM->FindMesh(meshname);
+	pMaterial = pSupport->pGfx->pRM->FindMaterial(materialname, material_Inst);
 }
 
 void StaticMeshComponent::Tick()
@@ -54,7 +54,7 @@ void StaticMeshComponent::Tick()
 		XMMatrixInverse(nullptr, MStoWS_T));
 
 	//°ó¶¨µ½Graphics
-	pGfx->AddQueue( pTransCBuffer, pMesh, pMaterial );
+	pSupport->pGfx->AddQueue( pTransCBuffer, pMesh, pMaterial );
 }
 
 

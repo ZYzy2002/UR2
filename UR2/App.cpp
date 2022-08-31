@@ -22,32 +22,34 @@ void App::Go()
 }
 
 App::App()
-	:mainWin{ 1280u, 720u, L"DR" }
+	:support{}
+	//:mainWin{ 1280u, 720u, L"DR" }
 {
-	//支持模块
-	pGfx = make_shared<Graphics>(mainWin.getWindowHandle());
-	pTimer = make_shared<Timer>();
+// 	//支持模块
+// 	pGfx = make_shared<Graphics>(mainWin.getWindowHandle());
+// 	pTimer = make_shared<Timer>();
 
 	//mesh
-	meshs.push_back({ pGfx });
+	meshs.push_back(&support);
 	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 0u);
-	meshs.rbegin()->transform.scale = { 0.8,0.1,2 };
-	meshs.rbegin()->transform.location.y = -0.5f;
-	meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 0,1,1,1 });
-
-	meshs.push_back({ pGfx });
-	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 1u);
 	meshs.rbegin()->transform.scale = { 0.2,2,0.2 };
 	meshs.rbegin()->transform.location.z = 0.5f;
-	meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,0,1 });
+	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
+	meshs.push_back(&support);
+	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 1u);
+	meshs.rbegin()->transform.scale = { 3,0.1,2 };
+	meshs.rbegin()->transform.location.y = -0.5f;
+	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
+
+	
 
 	//camera
-	pCa = make_shared<CameraComponent>(pGfx);
+	pCa = make_shared<CameraComponent>(&support);
 	pCa->transform.location = { 0, 0, 2 };
 
 	//spotLight
-	spotLights.push_back({ pGfx });
-	spotLights.rbegin()->transform.location = { 0,0,1 };
+	spotLights.push_back(&support);
+	spotLights.rbegin()->transform.location = { 0.5,-0.1,1.5 };
 }
 
 
@@ -56,7 +58,7 @@ void App::Tick()
 {
 
 	//清理 RT 和 DSV
-	pGfx->BeginFrame();
+	support.pGfx->BeginFrame();
 
 	//Mesh
 	for (auto& i : meshs)
@@ -79,13 +81,13 @@ void App::Tick()
 	
 	//其他
 	wstringstream title;
-	title << pTimer->Peek();
-	SetWindowTextW(mainWin.getWindowHandle(), title.str().c_str());
+	title << support.pTimer->Peek();
+	SetWindowTextW(support.pMainWin->getWindowHandle(), title.str().c_str());
 
 	//绘制
-	pGfx->ExecuteCommands();
+	support.pGfx->ExecuteCommands();
 
 	//翻转 前后Buffer
-	pGfx->EndFrame();
+	support.pGfx->EndFrame();
 }
 

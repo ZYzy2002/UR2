@@ -1,9 +1,9 @@
 #include "SpotLightComponent.h"
 
-SpotLightComponent::SpotLightComponent(shared_ptr<Graphics> pGfx)
-	:Component(pGfx)
+SpotLightComponent::SpotLightComponent(Support* pSupport)
+	:Component(pSupport)
 {
-	lightTransCB = make_shared<ConstantBuffer>(pGfx->GetDevice(), pGfx->GetContext());
+	lightTransCB = make_shared<ConstantBuffer>(pSupport->pGfx->GetDevice(), pSupport->pGfx->GetContext());
 	lightTransCB->LoadLayout( 3u,
 		string{ "L_VStoWS" }, ConstantBuffer::ParaType::MATRIX,
 		string{ "L_WStoVS" }, ConstantBuffer::ParaType::MATRIX,
@@ -51,5 +51,5 @@ void SpotLightComponent::Tick()
 	lightTransCB->SetFloat4("LightColor", LightColor);
 	lightTransCB->SetFloat4("LightRadius", LightRadius);
 
-	pGfx->AddSpotLight(lightTransCB);
+	pSupport->pGfx->AddSpotLight(lightTransCB);
 }

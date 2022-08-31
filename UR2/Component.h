@@ -2,7 +2,7 @@
 
 #include <DirectXMath.h>
 #include <memory>
-#include "Graphics.h"
+#include "Support.h"
 
 using namespace std;
 using namespace DirectX;
@@ -25,9 +25,9 @@ class Component
 {
 public:
 	Transform transform;
-	Component(shared_ptr<Graphics> pGfx);
+	Component(Support* pSupport);
 protected:
-	shared_ptr<Graphics> pGfx;
+	Support* pSupport;
 public:
 	~Component() = default;
 	virtual void Tick();

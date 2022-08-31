@@ -10,7 +10,7 @@ class Support
 public:
 	Support();
 
-	shared_ptr<Window> mainWin;
+	shared_ptr<Window> pMainWin;
 	shared_ptr<Graphics> pGfx;
 	shared_ptr<Timer> pTimer;
 };
