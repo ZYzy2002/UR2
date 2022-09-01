@@ -23,12 +23,7 @@ void App::Go()
 
 App::App()
 	:support{}
-	//:mainWin{ 1280u, 720u, L"DR" }
 {
-// 	//Ö§³ÖÄ£¿é
-// 	pGfx = make_shared<Graphics>(mainWin.getWindowHandle());
-// 	pTimer = make_shared<Timer>();
-
 	//mesh
 	meshs.push_back(&support);
 	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 0u);
@@ -41,7 +36,6 @@ App::App()
 	meshs.rbegin()->transform.location.y = -0.5f;
 	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
 
-	
 
 	//camera
 	pCa = make_shared<CameraComponent>(&support);
@@ -49,7 +43,8 @@ App::App()
 
 	//spotLight
 	spotLights.push_back(&support);
-	spotLights.rbegin()->transform.location = { 0.5,-0.1,1.5 };
+	spotLights.rbegin()->transform.location = { 0.5,-0.2,1.5 };
+	spotLights.rbegin()->LightColor = { 0, 1, 1, 3 };
 }
 
 
@@ -65,9 +60,6 @@ void App::Tick()
 	{
 		i.Tick();
 	}
-// 	meshs.begin()->transform.rotation.y += 0.01;
-//  	meshs.begin()->transform.rotation.x += 0.01;
-// 	meshs.begin()->transform.rotation.z += 0.01;
 
 	//Camera
 	pCa->Tick();

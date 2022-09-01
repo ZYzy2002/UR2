@@ -3,6 +3,27 @@
 #include <fbxsdk.h>
 #include <assert.h>
 
+void VertexBuffer::VertexInfo::swap(VertexInfo& other)
+{
+	XMFLOAT3 temp3;
+	XMFLOAT2 temp2;
+
+	temp3 = other.position;
+	other.position = position;
+	position = temp3;
+
+	temp3 = other.normal;
+	other.normal = normal;
+	normal = temp3;
+
+	temp3 = other.tangent;
+	other.tangent = tangent;
+	tangent = temp3;
+	
+	temp2 = other.texcoord;
+	other.texcoord = texcoord;
+	texcoord = temp2;
+}
 
 
 VertexBuffer::VertexBuffer(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11DeviceContext> pContext)
@@ -90,7 +111,8 @@ void VertexBuffer::Load(wstring fileName_FBX)
 				int iNumVertices = pMesh->GetPolygonSize(j);
 				assert(iNumVertices == 3 && L"某个Polygone的 控制点 不是三个");
 
-				for (int k = 0; k < iNumVertices; k++) {
+				for (int k = 0; k < iNumVertices; k++)	//遍历一个面的三个控制点，获取position， normal，tangent，uv信息
+				{
 					int iControlPointIndex = pMesh->GetPolygonVertex(j, k);
 
 					FbxVector4 theVertexNormal;
@@ -163,21 +185,17 @@ void VertexBuffer::Load(wstring fileName_FBX)
 
 
 					VertexInfo oneVertexInfo;
-#if CHANGE_Clockwise
-					oneVertexInfo.position.x = pVertices[iControlPointIndex][0];
-					oneVertexInfo.position.y = pVertices[iControlPointIndex][2];
-					oneVertexInfo.position.z = pVertices[iControlPointIndex][1];
-#else
 					oneVertexInfo.position.x = pVertices[iControlPointIndex][0];
 					oneVertexInfo.position.y = pVertices[iControlPointIndex][1];
 					oneVertexInfo.position.z = pVertices[iControlPointIndex][2];
-#endif
+
 					oneVertexInfo.normal.x = theVertexNormal[0] * REVERSE_NORMAL;
 					oneVertexInfo.normal.y = theVertexNormal[1] * REVERSE_NORMAL;
 					oneVertexInfo.normal.z = theVertexNormal[2] * REVERSE_NORMAL;
 					oneVertexInfo.tangent.x = tangent[0];
 					oneVertexInfo.tangent.y = tangent[1];
 					oneVertexInfo.tangent.z = tangent[2];
+
 					if (isUnmapped)//该顶点 没有映射UV；
 					{
 						oneVertexInfo.texcoord.x = 0;
@@ -190,6 +208,9 @@ void VertexBuffer::Load(wstring fileName_FBX)
 					}
 					vertexBuffer.push_back(oneVertexInfo);
 				}
+#if CHANGE_Clockwise
+				vertexBuffer.rbegin()->swap(*(++vertexBuffer.rbegin()));//最后一个与倒数第二个交换
+#endif
 			}
 		}
 	}

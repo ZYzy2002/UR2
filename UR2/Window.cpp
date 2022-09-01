@@ -37,7 +37,8 @@ Window::WindowRegisterClass::WindowRegisterClass() noexcept
 	RegisterClassEx(&wc);
 }
 
-Window::Window(UINT width, UINT height, const wchar_t* windowtitle)
+Window::Window(UINT width, UINT height, const wchar_t* windowTitle,
+	void* WM_CreateLparam)
 	:width{ width }, height{ height }
 {
 	RECT windowClientSide;
@@ -50,13 +51,13 @@ Window::Window(UINT width, UINT height, const wchar_t* windowtitle)
 
 	theWindowHandle = CreateWindow(
 		WindowRegisterClass::GetRegisterClassName(),
-		windowtitle,
+		windowTitle,
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		windowClientSide.right - windowClientSide.left, windowClientSide.bottom - windowClientSide.top,
 		nullptr, nullptr,
 		WindowRegisterClass::GetInstance(),
-		this
+		WM_CreateLparam
 	);
 
 	ShowWindow(theWindowHandle, SW_SHOWDEFAULT);
@@ -74,14 +75,20 @@ UINT Window::GetWidth()
 
 LRESULT Window::HandleMassage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+	static Input* dealWithmassage = nullptr;
 	switch (msg)
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
-		return 0;
+		return S_OK;
+	case WM_CREATE:
+		dealWithmassage = (Input*)(void*)lParam;
+		break;
 	default:
-
-		;
+		if (dealWithmassage != nullptr)
+		{
+			dealWithmassage->HandleMassage(hWnd, msg, wParam, lParam);
+		}
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

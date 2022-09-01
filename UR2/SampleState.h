@@ -12,7 +12,7 @@ public:
 	SampleState(SampleState&& tempSamplerState);
 public:
 	void SetSlot(UINT newSlot);
-	void Load(D3D11_TEXTURE_ADDRESS_MODE texAddressMode);
+	void Load(D3D11_TEXTURE_ADDRESS_MODE texAddressMode, D3D11_FILTER filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR);
 	void Bind();
 	void BindVS();
 	void BindPS();

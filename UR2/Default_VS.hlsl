@@ -27,7 +27,7 @@ VSOut main(VSIn v)
     float4 posVS = mul(o.posWS, WStoVS);
     o.posCS = mul(posVS, VStoCS);
     
-    o.normalWS = float4(mul(v.normalMS.xyz, (float3x3) MStoWS), 1);
+    o.normalWS = float4(mul(v.normalMS.xyz, (float3x3) WStoMS), 1);
     o.uv = v.uv;
     return o;
 }

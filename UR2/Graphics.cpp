@@ -145,7 +145,7 @@ void Graphics::ExecuteCommands()
 			temp.Load(&j.shadowMap, 0u);
 			temp.Bind();
 			pRM->FindSampler(L"Border")->Bind();
-			//绑定 灯关CB3
+			//绑定 灯光CB3
 			j.spotLightCB3->Bind();
 
 			i.pModelTransCB0->Bind();

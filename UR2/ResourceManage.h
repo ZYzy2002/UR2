@@ -10,6 +10,7 @@
 #include "StaticMesh.h"
 #include "Material.h"
 #include "SampleState.h"
+#include "BlendState.h"
 
 
 using namespace Microsoft::WRL;
@@ -37,12 +38,15 @@ public:
 
 	//采样状态
 	map<wstring, SampleState> samplerStates;
+	void CreateSampler(wstring name, D3D11_TEXTURE_ADDRESS_MODE tex2DAddress, D3D11_FILTER filter);
 	SampleState* FindSampler(wstring name);
+	
 	//材质
 	map<wstring, deque<Material>> materials;
 	void CreateMaterial(const wstring& name);	//传入着色器前缀名
 	Material* FindMaterial(const wstring& name, UINT instance); //instance 从0计
 
-	
+	//混合状态
+
 };
 

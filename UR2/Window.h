@@ -2,6 +2,9 @@
 #include <Windows.h>
 #include <memory>
 
+#include "assert.h"
+#include "Input.h"
+
 
 class Window
 {
@@ -20,7 +23,8 @@ class Window
 		HINSTANCE hInst;
 	};
 public:
-	Window(UINT width, UINT hight, const wchar_t* windowtitle);
+	Window(UINT width, UINT hight, const wchar_t* windowTitle,
+		void* WM_CreateLparam = nullptr);
 private:
 	HWND theWindowHandle;
 	UINT width;

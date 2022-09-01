@@ -13,11 +13,8 @@ ResourceManage::ResourceManage(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11Device
 	CreateTex2D(L"Noise");
 	
 	//SamplerState
-	SampleState temp{ pDevice, pContext };
-	temp.Load(D3D11_TEXTURE_ADDRESS_WRAP);
-	samplerStates.insert(pair<wstring, SampleState>( L"Warp", std::move(temp)));
-	temp.Load(D3D11_TEXTURE_ADDRESS_BORDER);
-	samplerStates.insert(pair<wstring, SampleState>(L"Border", std::move(temp)));
+	CreateSampler(L"Warp", D3D11_TEXTURE_ADDRESS_WRAP, D3D11_FILTER_MIN_MAG_MIP_LINEAR);
+	CreateSampler(L"Border", D3D11_TEXTURE_ADDRESS_BORDER, D3D11_FILTER_MIN_MAG_MIP_LINEAR);
 
 	//Material
 	CreateMaterial(L"Default");
@@ -67,6 +64,12 @@ Texture2D* ResourceManage::FindTex2D(const wstring& name)
 	return nullptr;
 }
 
+void ResourceManage::CreateSampler(wstring name, D3D11_TEXTURE_ADDRESS_MODE tex2DAddress, D3D11_FILTER filter)
+{
+	SampleState temp{ pDevice, pContext };
+	temp.Load(tex2DAddress, filter);
+	samplerStates.insert(pair<wstring, SampleState>(name, std::move(temp)));
+}
 SampleState* ResourceManage::FindSampler(wstring name)
 {
 	auto p = samplerStates.find(name);

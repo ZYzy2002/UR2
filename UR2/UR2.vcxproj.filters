@@ -76,6 +76,12 @@
     <ClCompile Include="Window.cpp">
       <Filter>Support\SupportModular</Filter>
     </ClCompile>
+    <ClCompile Include="BlendState.cpp">
+      <Filter>Draw\State</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencilState.cpp">
+      <Filter>Draw\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraComponent.h">
@@ -149,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Support\SupportModular</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendState.h">
+      <Filter>Draw\State</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilState.h">
+      <Filter>Draw\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

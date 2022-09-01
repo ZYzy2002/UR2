@@ -22,10 +22,10 @@ void SampleState::SetSlot(UINT newSlot)
 	slot = newSlot;
 }
 
-void SampleState::Load(D3D11_TEXTURE_ADDRESS_MODE texAddressMode)
+void SampleState::Load(D3D11_TEXTURE_ADDRESS_MODE texAddressMode, D3D11_FILTER filter)
 {
 	D3D11_SAMPLER_DESC samplerDesc{};
-	samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.Filter = filter;
 	samplerDesc.AddressU = texAddressMode;
 	samplerDesc.AddressV = texAddressMode;
 	samplerDesc.AddressW = texAddressMode;

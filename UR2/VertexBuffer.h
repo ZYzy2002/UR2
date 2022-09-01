@@ -22,6 +22,7 @@ class VertexBuffer :public Bindable
 		XMFLOAT3 normal;
 		XMFLOAT3 tangent;
 		XMFLOAT2 texcoord;
+		void swap(VertexInfo& other);
 	};
 
 	ComPtr<ID3D11Buffer> pVertexBuffer = nullptr;
