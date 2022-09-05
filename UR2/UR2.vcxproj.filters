@@ -64,9 +64,6 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Support\SupportModular</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Support\SupportModular</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManage.cpp">
       <Filter>Support\SupportModular</Filter>
     </ClCompile>
@@ -142,9 +139,6 @@
       <Filter>Support\Main</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
-      <Filter>Support\SupportModular</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
       <Filter>Support\SupportModular</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManage.h">

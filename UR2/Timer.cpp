@@ -2,19 +2,29 @@
 
 Timer::Timer()
 {
-	last = steady_clock::now();
+	gameBegin = steady_clock::now();
 }
 
-float Timer::Mark()
+float Timer::Subtract(timepoint a, timepoint b)
 {
-	const auto old = last;
-	last = steady_clock::now();
-	const duration<float> frameTime = last - old;
+	const duration<float> frameTime = b - a;
 	return frameTime.count();
 }
 
-float Timer::Peek() const
+float Timer::GameTime()
 {
-	return duration<float>	{steady_clock::now() - last }.count();
+	return Subtract(gameBegin, thisFrame);
+}
+
+float Timer::DeltaTime()
+{
+	return deltatime;
+}
+
+void Timer::Tick()
+{
+	lastFrame = thisFrame;
+	thisFrame = steady_clock::now();
+	deltatime = Subtract(lastFrame, thisFrame);
 }
 

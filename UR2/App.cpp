@@ -51,7 +51,7 @@ App::App()
 
 void App::Tick()
 {
-
+	support.Tick();
 	//清理 RT 和 DSV
 	support.pGfx->BeginFrame();
 
@@ -73,7 +73,7 @@ void App::Tick()
 	
 	//其他
 	wstringstream title;
-	title << support.pTimer->Peek();
+	title << support.pTimer->GameTime();
 	SetWindowTextW(support.pMainWin->getWindowHandle(), title.str().c_str());
 
 	//绘制

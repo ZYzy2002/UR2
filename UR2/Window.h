@@ -1,9 +1,10 @@
 #pragma once
 #include <Windows.h>
 #include <memory>
+#include <DirectXMath.h>
 
 #include "assert.h"
-#include "Input.h"
+
 
 
 class Window
@@ -22,9 +23,28 @@ class Window
 		static WindowRegisterClass wndClass;
 		HINSTANCE hInst;
 	};
+	class mInput
+	{
+	public:
+		mInput();
+		~mInput();
+		bool* isKeyDown;// array[0x78]
+
+		bool isLButtonDown;
+		bool isRButtonDown;
+		float cursorPosX;
+		float cursorPosY;
+		float lastFrameCursorPosX;
+		float lastFrameCursorPosY;
+	public:
+		void SetCursorClientPos(int posx, int posy);
+		//bool isOutside;
+		DirectX::XMFLOAT2 CursorMoveVector();
+	public:
+		void CALLBACK HandleMassage(HWND, UINT, WPARAM, LPARAM)noexcept;
+	};
 public:
-	Window(UINT width, UINT hight, const wchar_t* windowTitle,
-		void* WM_CreateLparam = nullptr);
+	Window(UINT width, UINT hight, const wchar_t* windowTitle);
 private:
 	HWND theWindowHandle;
 	UINT width;
@@ -37,6 +57,8 @@ public:
 	UINT GetWidth();
 
 	static LRESULT CALLBACK HandleMassage(HWND, UINT, WPARAM, LPARAM)noexcept;
+	void Tick();
+	mInput inputState;
 	HWND getWindowHandle();
 
 };
