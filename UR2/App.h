@@ -7,7 +7,7 @@
 
 #include "Support.h"
 #include "StaticMeshComponent.h"
-#include "CameraComponent.h"
+#include "MoveCamera.h"
 #include "SpotLightComponent.h"
 
 using namespace std;

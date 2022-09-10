@@ -79,6 +79,9 @@
     <ClCompile Include="DepthStencilState.cpp">
       <Filter>Draw\State</Filter>
     </ClCompile>
+    <ClCompile Include="MoveCamera.cpp">
+      <Filter>Component\ChildComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraComponent.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="DepthStencilState.h">
       <Filter>Draw\State</Filter>
     </ClInclude>
+    <ClInclude Include="MoveCamera.h">
+      <Filter>Component\ChildComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="CB0 CB2 CB3.hlsli">
@@ -203,6 +209,9 @@
     </Filter>
     <Filter Include="Support\SupportModular">
       <UniqueIdentifier>{ee8fbb87-921e-44b8-810a-3cc310672e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\ChildComponent">
+      <UniqueIdentifier>{b6e9c512-f572-4f00-b0ed-ee2bef29e0a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

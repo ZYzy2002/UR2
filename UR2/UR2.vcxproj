@@ -161,6 +161,7 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MoveCamera.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="RenderTargetView.cpp" />
     <ClCompile Include="ResourceManage.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MoveCamera.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="ResourceManage.h" />

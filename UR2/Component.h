@@ -17,6 +17,8 @@ public:
 	XMFLOAT3 location;
 	XMFLOAT3 rotation;
 	XMFLOAT3 scale;
+
+	void Move(const XMFLOAT3& delta);
 };
 
 

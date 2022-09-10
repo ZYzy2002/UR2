@@ -6,6 +6,13 @@ Transform::Transform()
 
 }
 
+void Transform::Move(const XMFLOAT3& delta)
+{
+	location.x += delta.x;
+	location.y += delta.y;
+	location.z += delta.z;
+}
+
 Component::Component(Support* pSupport)
 	: pSupport{pSupport}
 {

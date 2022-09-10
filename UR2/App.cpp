@@ -17,7 +17,6 @@ void App::Go()
 
 		Tick();
 	}
-
 	return;
 }
 
@@ -38,7 +37,7 @@ App::App()
 
 
 	//camera
-	pCa = make_shared<CameraComponent>(&support);
+	pCa = make_shared<MoveCamera>(&support);
 	pCa->transform.location = { 0, 0, 2 };
 
 	//spotLight

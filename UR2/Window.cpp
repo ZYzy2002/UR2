@@ -2,7 +2,6 @@
 
 Window::WindowRegisterClass Window::WindowRegisterClass::wndClass;
 
-
 const wchar_t* Window::WindowRegisterClass::GetRegisterClassName() noexcept
 {
 	return wndClassName;
@@ -34,25 +33,29 @@ Window::WindowRegisterClass::WindowRegisterClass() noexcept
 	RegisterClassEx(&wc);
 }
 
-Window::mInput::mInput()
+Window::Input::Input()
 {
-	isKeyDown = new bool[0x7B]{ 0 };
+	for (int i = 0; i < 0x7B; ++i)
+	{
+		isKeyDown[i] = false;
+	}
 }
-Window::mInput::~mInput()
+Window::Input::~Input()
 {
-	delete[] isKeyDown;
-	isKeyDown = nullptr;
-}
 
-void Window::mInput::SetCursorClientPos(int posx, int posy)
+}
+bool& Window::Input::operator[](size_t index)
+{
+	return isKeyDown[index];
+}
+void Window::Input::UpdateCursorClientPos(int posx, int posy)
 {
 	lastFrameCursorPosX = cursorPosX;
 	cursorPosX = posx;
 	lastFrameCursorPosY = cursorPosY;
 	cursorPosY = posy;
 }
-
-DirectX::XMFLOAT2 Window::mInput::CursorMoveVector()
+DirectX::XMFLOAT2 Window::Input::CursorMoveVector()
 {
 	return { cursorPosX - lastFrameCursorPosX, cursorPosY - lastFrameCursorPosY };
 }
@@ -62,10 +65,10 @@ void Window::Tick()
 	POINT FAR pos;
  	GetCursorPos(&pos);
  	ScreenToClient(getWindowHandle(), &pos);
-	inputState.SetCursorClientPos(pos.x, pos.y);
+	inputState.UpdateCursorClientPos(pos.x, pos.y);
 }
 
-void Window::mInput::HandleMassage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+void Window::Input::HandleMassage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	//处理 键盘 鼠标 输入，窗口关闭等消息在Window类中
 	switch (msg)
@@ -141,14 +144,18 @@ UINT Window::GetWidth()
 
 LRESULT Window::HandleMassage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	static mInput* dealWithmassage = nullptr;
+	static Input* dealWithmassage = nullptr;
+
 	switch (msg)
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		return S_OK;
 	case WM_CREATE:
-		dealWithmassage = (mInput*)(void*)lParam;
+		CREATESTRUCTW*  pCreate;
+		pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+		dealWithmassage = static_cast<Input*>(pCreate->lpCreateParams);
+
 		break;
 	default:
 		if (dealWithmassage != nullptr)

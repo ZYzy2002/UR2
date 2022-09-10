@@ -23,12 +23,13 @@ class Window
 		static WindowRegisterClass wndClass;
 		HINSTANCE hInst;
 	};
-	class mInput
+public:
+	class Input
 	{
 	public:
-		mInput();
-		~mInput();
-		bool* isKeyDown;// array[0x78]
+		Input();
+		~Input();
+		bool isKeyDown[0x7B+1];//  124  0x41-0x5A 65-90
 
 		bool isLButtonDown;
 		bool isRButtonDown;
@@ -37,8 +38,8 @@ class Window
 		float lastFrameCursorPosX;
 		float lastFrameCursorPosY;
 	public:
-		void SetCursorClientPos(int posx, int posy);
-		//bool isOutside;
+		bool& operator[](size_t index);
+		void UpdateCursorClientPos(int posx, int posy);
 		DirectX::XMFLOAT2 CursorMoveVector();
 	public:
 		void CALLBACK HandleMassage(HWND, UINT, WPARAM, LPARAM)noexcept;
@@ -58,8 +59,7 @@ public:
 
 	static LRESULT CALLBACK HandleMassage(HWND, UINT, WPARAM, LPARAM)noexcept;
 	void Tick();
-	mInput inputState;
+	Input inputState;
 	HWND getWindowHandle();
-
 };
 
