@@ -1,4 +1,7 @@
+#include <algorithm> //clamp
+
 #include "MoveCamera.h"
+
 
 MoveCamera::MoveCamera(Support* pSupport)
 	:CameraComponent(pSupport)
@@ -55,7 +58,7 @@ void MoveCamera::Tick()
 		moveDir.z *= deltaTime * moveVelocity;
 		transform.Move(moveDir);
 	}
-	if (input['Q'] == true)	//WS向下移动
+	if (input['Q'] == true)	//WorldSpace向下移动
 	{
 		moveDir = { 0, -1, 0 };
 		float deltaTime = pSupport->pTimer->DeltaTime();
@@ -64,7 +67,7 @@ void MoveCamera::Tick()
 		moveDir.z *= deltaTime * moveVelocity;
 		transform.Move(moveDir);
 	}
-	if (input['E'] == true) //WS向上移动
+	if (input['E'] == true) //WorldSpace向上移动
 	{
 		moveDir = { 0, 1, 0 };
 		float deltaTime = pSupport->pTimer->DeltaTime();
@@ -79,8 +82,18 @@ void MoveCamera::Tick()
 		//OutputDebugStringW(L"right button");
 		transform.rotation.x -= mouseMove.y * rotateStrength;
 		transform.rotation.y -= mouseMove.x * rotateStrength;
+		if (transform.rotation.x > XM_PIDIV2)
+		{
+			transform.rotation.x = XM_PIDIV2;
+		}
+		if (transform.rotation.x < -XM_PIDIV2)
+		{
+			transform.rotation.x = -XM_PIDIV2;
+		}
+		DirectX::XMQuaternionRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z);
 	}
 	
 	//父类Tick 用于更新 CameraTransCBufferCB2
 	CameraComponent::Tick();
+	
 }
