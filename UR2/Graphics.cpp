@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-#define SHADOW_MAP_PRECISION 256.f
+#define SHADOW_MAP_PRECISION 1024.f
 
 Graphics::Graphics(HWND outputWindowHandle)
 {
@@ -34,21 +34,24 @@ Graphics::Graphics(HWND outputWindowHandle)
 		nullptr,
 		&pContext
 	);
+	//资源管理
 	pRM = make_shared<ResourceManage>(pDevice, pContext);
 
+	//渲染目标，深度
 	Texture2D forRTV{ pDevice,pContext };
 	pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &forRTV.GetTex2D());
-
 	Texture2D forDepth{ pDevice,pContext };
 	forDepth.LoadForDSV(1280u, 720u);
 
 	screen = make_shared<RenderTargetView>(pDevice, pContext);
-	screen->Load(vector<Texture2D*>{&forRTV}, & forDepth);
+	screen->Load(vector<Texture2D*>{&forRTV}, &forDepth);
 	screen->Bind();
 
 	//primitive topology
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	//深度测试由 默认（less）改为 lessEqual， 用于混合多种灯光
+	pRM->FindDepthStencilState(L"LessEqual")->Bind();
 }
 
 void Graphics::BeginFrame()
@@ -137,9 +140,15 @@ void Graphics::ExecuteCommands()
 	screen->Bind();
 	for (MeshCommand& i : meshCommands)
 	{
-		
+		//遍历灯光
+		UINT lightIndex = 0u;
 		for (LightCommand& j : spotLightCommands)
 		{
+			if (lightIndex == 1u)
+			{
+				//混合状态 OneOne
+				pRM->FindBlendState(L"BlendOneOne")->Bind();
+			}
 			//绑定 纹理
 			ShaderResourceView temp{ pDevice,pContext };
 			temp.Load(&j.shadowMap, 0u);
@@ -151,7 +160,12 @@ void Graphics::ExecuteCommands()
 			i.pModelTransCB0->Bind();
 			i.pMaterial->Bind();
 			i.pMesh->Draw();
+
+			++lightIndex;
 		}
+
+		//混合状态 Replace
+		pRM->FindBlendState(L"BlendOneZero")->Bind();
 	}
 
 	//清除

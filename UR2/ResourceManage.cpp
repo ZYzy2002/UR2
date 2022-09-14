@@ -20,7 +20,11 @@ ResourceManage::ResourceManage(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11Device
 	CreateMaterial(L"Default");
 	FindMaterial(L"Default", 0u)->SetSRV(FindTex2D(L"Noise"), FindSampler(L"Warp"), 0u);
 
-	
+	//Blend State
+	CreateBlendState(L"BlendOneOne", D3D11_BLEND_ONE, D3D11_BLEND_ONE);
+	CreateBlendState(L"BlendOneZero", D3D11_BLEND_ONE, D3D11_BLEND_ZERO);
+	//DepthStencil State
+	CreateDepthStencilState(L"LessEqual", TRUE, TRUE);
 }
 
 void ResourceManage::CreateMesh(const wstring& name)
@@ -113,4 +117,46 @@ Material* ResourceManage::FindMaterial(const wstring& name, UINT instance)
 	}
 }
 
+void ResourceManage::CreateBlendState(wstring name, D3D11_BLEND srcFactor, D3D11_BLEND destFactor)
+{
+	BlendState temp{ pDevice, pContext };
+	temp.Load(srcFactor, destFactor);
+	blendStates.insert(pair<wstring, BlendState>(name, std::move(temp)));
+}
+BlendState* ResourceManage::FindBlendState(wstring name)
+{
+	auto p = blendStates.find(name);
+	if (p == blendStates.end())
+	{
+		assert(false && L"con't find the BlendState");
+		return nullptr;
+	}
+	else
+	{
+		return &(p->second);
+	}
+	return nullptr;
+}
+
+void ResourceManage::CreateDepthStencilState(wstring name, BOOL DepthTestEnable, 
+	BOOL DepthWriteEnable, D3D11_COMPARISON_FUNC compareFun)
+{
+	DepthStencilState temp{ pDevice, pContext };
+	temp.Load(DepthTestEnable, DepthWriteEnable, compareFun);
+	depthStencilStates.insert(pair<wstring, DepthStencilState>(name, std::move(temp)));
+}
+DepthStencilState* ResourceManage::FindDepthStencilState(wstring name)
+{
+	auto p = depthStencilStates.find(name);
+	if (p == depthStencilStates.end())
+	{
+		assert(false && L"con't find the DepthStencilState");
+		return nullptr;
+	}
+	else
+	{
+		return &(p->second);
+	}
+	return nullptr;
+}
 

@@ -6,6 +6,14 @@ BlendState::BlendState(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11DeviceContext>
 
 }
 
+BlendState::BlendState(BlendState&& other)
+	: Bindable(other.pDevice, other.pContext)
+{
+	auto temp = pBlendState;
+	pBlendState = other.pBlendState;
+	other.pBlendState = pBlendState;
+}
+
 void BlendState::Load(D3D11_BLEND srcFactor, D3D11_BLEND destFactor)
 {
 	D3D11_RENDER_TARGET_BLEND_DESC svTarget0Blend{};
@@ -16,7 +24,7 @@ void BlendState::Load(D3D11_BLEND srcFactor, D3D11_BLEND destFactor)
 	svTarget0Blend.SrcBlendAlpha = srcFactor;
 	svTarget0Blend.DestBlendAlpha = destFactor;
 	svTarget0Blend.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-	svTarget0Blend.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+	svTarget0Blend.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;	//RGBA全部可以写入
 
 	D3D11_BLEND_DESC blendDesc;
 	blendDesc.AlphaToCoverageEnable = TRUE;

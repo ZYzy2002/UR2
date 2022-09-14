@@ -33,7 +33,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 
 	shared_ptr<RenderTargetView> screen;
-	//shared_ptr<RenderTargetView> gBuffer;
 
 public:
 	ComPtr<ID3D11Device> GetDevice();

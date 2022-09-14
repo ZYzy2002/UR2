@@ -44,6 +44,10 @@ App::App()
 	spotLights.push_back(&support);
 	spotLights.rbegin()->transform.location = { 0.5,-0.2,1.5 };
 	spotLights.rbegin()->LightColor = { 0, 1, 1, 3 };
+
+	spotLights.push_back(&support);
+	spotLights.rbegin()->transform.location = { -0.5,-0.2,1.5 };
+	spotLights.rbegin()->LightColor = { 1, 0, 1, 3 };
 }
 
 

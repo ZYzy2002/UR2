@@ -11,6 +11,7 @@
 #include "Material.h"
 #include "SampleState.h"
 #include "BlendState.h"
+#include "DepthStencilState.h"
 
 
 using namespace Microsoft::WRL;
@@ -47,6 +48,13 @@ public:
 	Material* FindMaterial(const wstring& name, UINT instance); //instance 从0计
 
 	//混合状态
-
+	map<wstring, BlendState> blendStates;
+	void CreateBlendState(wstring name, D3D11_BLEND srcFactor, D3D11_BLEND destFactor);
+	BlendState* FindBlendState(wstring name);
+	//深度模板状态
+	map<wstring, DepthStencilState> depthStencilStates;
+	void CreateDepthStencilState(wstring name, BOOL DepthTestEnable, BOOL DepthWriteEnable,
+		D3D11_COMPARISON_FUNC compareFun = D3D11_COMPARISON_LESS_EQUAL);
+	DepthStencilState* FindDepthStencilState(wstring name);
 };
 

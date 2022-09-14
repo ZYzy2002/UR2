@@ -28,7 +28,7 @@ private:
 	vector<SampleState*> pSamplerStates;
 public:
 	shared_ptr<ConstantBuffer> GetParas();
-	void SetSRV(Texture2D* pTex2D, SampleState* pSamplerState, UINT index);	//着色器使用的第几张贴图，从0计
+	void SetSRV(Texture2D* pTex2D, SampleState* pSamplerState, UINT index);	//着色器使用的第几张贴图，从0计,
 
 	void Bind();
 	void BindVSforShadowCaster();
