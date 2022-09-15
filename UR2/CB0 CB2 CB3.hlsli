@@ -4,8 +4,6 @@ cbuffer CB0 : register(b0)
     matrix WStoMS;
 }
 
-
-
 cbuffer CB2 : register(b2)
 {
     matrix VStoWS;
@@ -17,7 +15,6 @@ cbuffer CB2 : register(b2)
     float4 CameraPosWS;
     float4 CameraDirWS; //camera -Z轴 在WS的方向
 }
-
 
 cbuffer CB3 : register(b3)
 {
@@ -35,7 +32,8 @@ cbuffer CB3 : register(b3)
 }
 
 Texture2D _ShadowMap : register(t0);
-SamplerState _CompareBorder : register(s0);
+SamplerState _Border : register(s0);
+#define _ShadowMap_Precision 1024.f
 
 float SpotLightShadow(float4 posWS, Texture2D shadowMap, 
     SamplerState shadowMapSamplerState)
@@ -46,8 +44,32 @@ float SpotLightShadow(float4 posWS, Texture2D shadowMap,
     float2 uv_Light = float2(pos_LightNDC.x / 2.0f + 0.5, -pos_LightNDC.y / 2.0f + 0.5); //注意 y 方向有负号
     
 
-    float light01Depth = shadowMap.Sample(shadowMapSamplerState, uv_Light).r;
-    float shadow = step(pos_LightNDC.z, light01Depth + 0.00001);
+//    float light01Depth = shadowMap.Sample(shadowMapSamplerState, uv_Light).r;
+//    float shadow = step(pos_LightNDC.z, light01Depth + 0.00001);
+    float2 uv_light5[5];
+    float offset = 2.0f / _ShadowMap_Precision;
+    uv_light5[0] = uv_Light;
+    uv_light5[1] = uv_Light + float2(offset, 0);
+    uv_light5[2] = uv_Light + float2(-offset, 0);
+    uv_light5[3] = uv_Light + float2(0, offset);
+    uv_light5[4] = uv_Light + float2(0, -offset);
+    float light01Depth[5];
+    for (int i = 0; i < 5;i++)
+    {
+        light01Depth[i] = shadowMap.Sample(shadowMapSamplerState, uv_light5[i]).r;
+    }
+    bool cmp[5];
+    for (int j = 0; j < 5; j++)
+    {
+        cmp[j] = step(pos_LightNDC.z, light01Depth[j] + 0.00001);
+    }
+    float shadow = 0;
+    for (int k = 0; k < 5; k++)
+    {
+        shadow += float(cmp[k]);
+    }
+    shadow /= 5.0;
+    
     //SpotLight Mask，聚光灯正前方强度最大，斜向较弱
     float SpotLightMask = saturate(1 - length(uv_Light * 2 - 1));
     return shadow * SpotLightMask;

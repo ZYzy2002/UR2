@@ -19,7 +19,7 @@ float4 main(PSIn i) : SV_TARGET
     
     
     //shadow attenuation
-    float shadow = SpotLightShadow(posWS, _ShadowMap, _CompareBorder);
+    float shadow = SpotLightShadow(posWS, _ShadowMap, _Border);
     float atten = 1.0 / (0.5 * pow(length(LightPosWS.xyz - posWS.xyz), 2) + 1.0);
     
     //

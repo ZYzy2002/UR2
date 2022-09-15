@@ -1,5 +1,4 @@
-#include "CB0 CB2 CB3.hlsli"
-//#include "Default_CB1.hlsli"
+#include "Default_CB1.hlsli"
 
 
 struct VSIn
