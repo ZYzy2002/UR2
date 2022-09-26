@@ -202,6 +202,6 @@ void Graphics::ExecuteCommands()
 	meshCommands.clear();
 	pCameraCB2 = nullptr;
 	spotLightCommands.clear();
-	pointLightCommands.clear();
+	pointLightCommands.clear(); 
 }
 
