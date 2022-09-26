@@ -16,8 +16,8 @@ Texture2D::Image::Image(wstring path_fileName_extension)
 {
 	Gdiplus::Bitmap tex{ path_fileName_extension.c_str()};
 	width = tex.GetWidth();
-	heignt = tex.GetHeight();
-	texPixelArray.resize(width * heignt, mColor{});
+	height = tex.GetHeight();
+	texPixelArray.resize(width * height, mColor{});
 	Gdiplus::Color temp;
 	for (unsigned int i = 0; i < tex.GetHeight(); ++i)
 	{
@@ -57,7 +57,7 @@ void Texture2D::LoadFromFileForSRV(wstring fileName)
 
 	D3D11_TEXTURE2D_DESC tex2D_Desc;
 	tex2D_Desc.Width = readfile.width;
-	tex2D_Desc.Height = readfile.heignt;
+	tex2D_Desc.Height = readfile.height;
 	tex2D_Desc.MipLevels = 0u;															//一整套mipmap
 	tex2D_Desc.ArraySize = 1u;
 	tex2D_Desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -87,7 +87,7 @@ void Texture2D::LoadFromFileForSRV(wstring fileName_positiveX, wstring fileName_
 
 	D3D11_TEXTURE2D_DESC texCube_Desc;
 	texCube_Desc.Width = readfile[0].width;
-	texCube_Desc.Height = readfile[0].heignt;
+	texCube_Desc.Height = readfile[0].height;
 	texCube_Desc.MipLevels = 1u;															//一整套mipmap
 	texCube_Desc.ArraySize = 6u;
 	texCube_Desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;

@@ -79,30 +79,37 @@ void Graphics::AddQueue(shared_ptr<ConstantBuffer> pModelTrans, StaticMesh* pMes
 {
 	meshCommands.push_back({ pModelTrans, pMesh, pMaterial });
 }
-
 void Graphics::SetCamera(shared_ptr<ConstantBuffer> pCameraCB2)
 {
 	this->pCameraCB2 = pCameraCB2;
 }
-
 void Graphics::AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3)
 {
 	spotLightCommands.push_back({ pSpotLightCB3, {pDevice,pContext} });
+}
+void Graphics::AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s)
+{
+	PointLightCommand temp{ 
+		pPointLightCB3s, 
+		Texture2D{pDevice, pContext} 
+	};
+	pointLightCommands.push_back(std::move(temp));
 }
 
 void Graphics::ExecuteCommands()
 {
 	//shadow map
-	ViewPort renderToShadow{ pDevice, pContext };
-	renderToShadow.Load(SHADOW_MAP_PRECISION, SHADOW_MAP_PRECISION);
-	renderToShadow.Bind();
-	for (LightCommand& i : spotLightCommands)
+	ViewPort renderToShadowVP{ pDevice, pContext };
+	renderToShadowVP.Load(SHADOW_MAP_PRECISION, SHADOW_MAP_PRECISION);
+	renderToShadowVP.Bind();
+	for (SpotLightCommand& i : spotLightCommands)
 	{
-		i.shadowMap.LoadForDSV(renderToShadow.vp.Width, renderToShadow.vp.Height);
+		i.shadowMap.LoadForDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 		RenderTargetView renderForDepth{ pDevice,pContext };
 		renderForDepth.Load(vector<Texture2D*>{}, &i.shadowMap);
 		renderForDepth.Bind();
-		//相机
+		renderForDepth.ClearRTVsAndDSV();
+		//灯光作为相机
 		i.spotLightCB3->SetBindSlot(2u);
 		i.spotLightCB3->Bind();
 		i.spotLightCB3->SetBindSlot(3u);
@@ -117,6 +124,29 @@ void Graphics::ExecuteCommands()
 		}
 		//shadowMap转换 ： DSVtex2D to SRVtex2D
 		i.shadowMap.LoadForRTVandSRV(i.shadowMap);
+	}
+	for (PointLightCommand& i : pointLightCommands)
+	{
+ 		//i.shadowMap.LoadForCubeDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
+// 		RenderTargetView renderForDepth{ pDevice,pContext };
+//  		renderForDepth.Load(vector<Texture2D*>{}, & i.shadowMap);
+//  		renderForDepth.Bind();
+// 		renderForDepth.ClearRTVsAndDSV();
+//  		//灯光作为相机
+//  		i.pPointLightCB3s[0]->SetBindSlot(2u);
+//  		i.pPointLightCB3s[0]->Bind();
+//  		i.pPointLightCB3s[0]->SetBindSlot(3u);
+// 		//绘制深度
+// 		for (MeshCommand& j : meshCommands)
+// 		{
+// 			j.pModelTransCB0->Bind();
+// 			j.pMaterial->BindVSforShadowCaster();
+// 			PixelShader emptyPS{ pDevice,pContext };
+// 			emptyPS.Bind();
+// 			j.pMesh->Draw();
+// 		}
+		//shadowMap转换 ： DSVtex2D to SRVtex2D
+		//i.shadowMap.LoadForRTVandSRV(i.shadowMap);
 	}
 
 
@@ -142,7 +172,7 @@ void Graphics::ExecuteCommands()
 	{
 		//遍历灯光
 		UINT lightIndex = 0u;
-		for (LightCommand& j : spotLightCommands)
+		for (SpotLightCommand& j : spotLightCommands)
 		{
 			if (lightIndex == 1u)
 			{
@@ -172,5 +202,6 @@ void Graphics::ExecuteCommands()
 	meshCommands.clear();
 	pCameraCB2 = nullptr;
 	spotLightCommands.clear();
+	pointLightCommands.clear();
 }
 

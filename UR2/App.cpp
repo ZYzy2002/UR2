@@ -48,6 +48,9 @@ App::App()
 	spotLights.push_back(&support);
 	spotLights.rbegin()->transform.location = { -0.5,-0.2,1.5 };
 	spotLights.rbegin()->LightColor = { 1, 0, 1, 3 };
+	//pointLight
+	pointLights.push_back(&support);
+	spotLights.rbegin()->transform.location = { 0,-0.2,1.5 };
 }
 
 
@@ -69,6 +72,10 @@ void App::Tick()
 
 	//Light
 	for (auto& i : spotLights)
+	{
+		i.Tick();
+	}
+	for (auto& i : pointLights)
 	{
 		i.Tick();
 	}

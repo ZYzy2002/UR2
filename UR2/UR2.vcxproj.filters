@@ -49,9 +49,6 @@
     <ClCompile Include="ViewPort.cpp">
       <Filter>Draw\View</Filter>
     </ClCompile>
-    <ClCompile Include="SpotLightComponent.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
       <Filter>Support\Main</Filter>
     </ClCompile>
@@ -82,6 +79,15 @@
     <ClCompile Include="MoveCamera.cpp">
       <Filter>Component\ChildComponent</Filter>
     </ClCompile>
+    <ClCompile Include="SpotLightComponent.cpp">
+      <Filter>Component\LightComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLightComponent.cpp">
+      <Filter>Component\LightComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>Component\LightComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraComponent.h">
@@ -94,9 +100,6 @@
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="Bindable.h">
-      <Filter>Draw</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticMesh.h">
       <Filter>Draw</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
@@ -132,9 +135,6 @@
     <ClInclude Include="Texture2D.h">
       <Filter>Draw\View</Filter>
     </ClInclude>
-    <ClInclude Include="SpotLightComponent.h">
-      <Filter>Component</Filter>
-    </ClInclude>
     <ClInclude Include="App.h">
       <Filter>Support\Main</Filter>
     </ClInclude>
@@ -161,6 +161,18 @@
     </ClInclude>
     <ClInclude Include="MoveCamera.h">
       <Filter>Component\ChildComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLightComponent.h">
+      <Filter>Component\LightComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightComponent.h">
+      <Filter>Component\LightComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponent.h">
+      <Filter>Component\LightComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMesh.h">
+      <Filter>Draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +224,9 @@
     </Filter>
     <Filter Include="Component\ChildComponent">
       <UniqueIdentifier>{b6e9c512-f572-4f00-b0ed-ee2bef29e0a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\LightComponent">
+      <UniqueIdentifier>{883e36cc-25c9-491d-a170-77adba133753}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

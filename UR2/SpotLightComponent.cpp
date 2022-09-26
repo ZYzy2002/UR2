@@ -1,40 +1,23 @@
 #include "SpotLightComponent.h"
 
+#define SPOT_LIGHT_NEARZ 0.1f
+
 SpotLightComponent::SpotLightComponent(Support* pSupport)
-	:Component(pSupport)
+	:LightComponent(pSupport)
 {
-	lightTransCB = make_shared<ConstantBuffer>(pSupport->pGfx->GetDevice(), pSupport->pGfx->GetContext());
-	lightTransCB->LoadLayout( 3u,
-		string{ "L_VStoWS" }, ConstantBuffer::ParaType::MATRIX,
-		string{ "L_WStoVS" }, ConstantBuffer::ParaType::MATRIX,
-		string{ "L_VStoCS" }, ConstantBuffer::ParaType::MATRIX,
-		string{ "L_CStoVS" }, ConstantBuffer::ParaType::MATRIX,
-
-		string{ "LightPosWS" }, ConstantBuffer::ParaType::FLOAT4,
-		string{ "LightDirWS" }, ConstantBuffer::ParaType::FLOAT4,
-
-		string{ "LightColor" }, ConstantBuffer::ParaType::FLOAT4,
-		string{ "LightRadius" }, ConstantBuffer::ParaType::FLOAT4
-		);
-	lightTransCB->SetMatrix("L_VStoWS", XMMatrixIdentity());
-	lightTransCB->SetMatrix("L_WStoVS", XMMatrixIdentity());
-	lightTransCB->SetFloat4("LightColor", LightColor);
-	lightTransCB->SetFloat4("LightRadius", LightRadius);
-
-	lightTransCB->Load();
-
+	lightTransCB = LightComponent::CreateLightCBuffer_Initialize();
 }
 
 void SpotLightComponent::Tick()
 {
 	XMMATRIX L_VStoWS = XMMatrixTranspose(
-		XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z)
-		* XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z)
+		//XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z)
+		XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z)
 		* XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z)
 	);
 	XMMATRIX L_WStoVS = XMMatrixInverse(nullptr, L_VStoWS);
 	XMMATRIX L_VStoCS = XMMatrixTranspose(
-		XMMatrixPerspectiveFovRH(LightfovAngle, 1, 0.1f, LightRadius.x)
+		XMMatrixPerspectiveFovRH(LightfovAngle, 1, SPOT_LIGHT_NEARZ, LightRadius.x)
 	);
 	XMMATRIX L_CStoVS = XMMatrixInverse(nullptr, L_VStoCS);
 
@@ -48,7 +31,7 @@ void SpotLightComponent::Tick()
 	lightTransCB->SetMatrix("L_CStoVS", L_CStoVS);
 	lightTransCB->SetFloat4("LightPosWS", LightPosWS);
 	lightTransCB->SetFloat4("LightDirWS", LightDirWS);
-	lightTransCB->SetFloat4("LightColor", LightColor);
+	lightTransCB->SetFloat4("LightColor", LightComponent::LightColor);
 	lightTransCB->SetFloat4("LightRadius", LightRadius);
 
 	pSupport->pGfx->AddSpotLight(lightTransCB);

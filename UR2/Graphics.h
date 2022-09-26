@@ -6,6 +6,7 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include <array>
 
 #include "ResourceManage.h"
 #include "ViewPort.h"
@@ -45,16 +46,23 @@ public:
 public:
 
 	//渲染管线
+	//物体
 	struct MeshCommand {shared_ptr<ConstantBuffer> pModelTransCB0; StaticMesh* pMesh; Material* pMaterial;	};
 	list<MeshCommand> meshCommands;
+	//相机
 	shared_ptr<ConstantBuffer> pCameraCB2;
-	struct LightCommand { shared_ptr<ConstantBuffer> spotLightCB3; Texture2D shadowMap; };
-	list<LightCommand> spotLightCommands;
+	//聚光
+	struct SpotLightCommand { shared_ptr<ConstantBuffer> spotLightCB3; Texture2D shadowMap; };
+	list<SpotLightCommand> spotLightCommands;
+	//点光
+	struct PointLightCommand { std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s; Texture2D shadowMap; };
+	list<PointLightCommand> pointLightCommands;
 
 	void AddQueue(shared_ptr<ConstantBuffer> pModelTrans, 
 		StaticMesh* pMesh, Material* pMaterial);
 	void SetCamera(shared_ptr<ConstantBuffer> pCameraCB2);
 	void AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3);
+	void AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s);
 	void ExecuteCommands();
 };
 

@@ -31,7 +31,7 @@ public:
 	public:
 		std::vector<mColor> texPixelArray;
 		UINT width = 0u;
-		UINT heignt = 0u;
+		UINT height = 0u;
 		Image(wstring path_fileName_extension);
 	};
 

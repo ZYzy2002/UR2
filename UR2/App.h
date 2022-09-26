@@ -9,6 +9,7 @@
 #include "StaticMeshComponent.h"
 #include "MoveCamera.h"
 #include "SpotLightComponent.h"
+#include "PointLightComponent.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ public:
 	list<StaticMeshComponent> meshs;
 	shared_ptr<CameraComponent> pCa;
 	list<SpotLightComponent> spotLights;
+	list<PointLightComponent> pointLights;
 
 
 	void Go();
