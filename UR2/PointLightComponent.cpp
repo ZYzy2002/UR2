@@ -13,10 +13,15 @@ PointLightComponent::PointLightComponent(Support* pSupport)
 
 void PointLightComponent::Tick()
 {
+	XMVECTOR temp = XMQuaternionRotationAxis({ 0,0,1,0 }, XM_PIDIV2);
+	XMFLOAT4 tempf{};
+	XMStoreFloat4(&tempf, temp);
+
+
+
+	//XMMatrixRotationQuaternion();
 	//Update LightCBuffer
 	XMMATRIX L_VStoWS[6]{}; //+X -X +Y -Y +Z -Z
-	L_VStoWS[5] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
 	L_VStoWS[0] = XMMatrixTranspose(
 		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
 	L_VStoWS[1] = XMMatrixTranspose(
@@ -27,12 +32,20 @@ void PointLightComponent::Tick()
 		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
 	L_VStoWS[4] = XMMatrixTranspose(
 		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
-
+	L_VStoWS[5] = XMMatrixTranspose(
+		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
 
 	XMMATRIX L_WStoVS[6]{ };
-	/*= XMMatrixInverse(nullptr, L_VStoWS);*/
+	for (int i = 0; i < 6; i++)
+	{
+		L_WStoVS[i] = XMMatrixInverse(nullptr, L_VStoWS[i]);
+	}
 
 	XMFLOAT4 LightDirWS[6]{};
+	for (int i = 0; i < 6; i++)
+	{
+		XMStoreFloat4(&LightDirWS[i], XMVector4Transform(XMVECTOR{ 0,0,-1.f,0.f }, XMMatrixTranspose(L_VStoWS[i])));
+	}
 	/*XMStoreFloat4(&LightDirWS, XMVector4Transform(XMVECTOR{ 0,0,-1.f,0.f }, XMMatrixTranspose(L_VStoWS)));*/
 
 

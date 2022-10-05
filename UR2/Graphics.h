@@ -55,7 +55,9 @@ public:
 	struct SpotLightCommand { shared_ptr<ConstantBuffer> spotLightCB3; Texture2D shadowMap; };
 	list<SpotLightCommand> spotLightCommands;
 	//µã¹â
-	struct PointLightCommand { std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s; Texture2D shadowMap; };
+	struct PointLightCommand { std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s;
+		std::array<Texture2D,6> shadowMap; 
+	};
 	list<PointLightCommand> pointLightCommands;
 
 	void AddQueue(shared_ptr<ConstantBuffer> pModelTrans, 

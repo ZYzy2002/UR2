@@ -89,9 +89,16 @@ void Graphics::AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3)
 }
 void Graphics::AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s)
 {
-	PointLightCommand temp{ 
-		pPointLightCB3s, 
-		Texture2D{pDevice, pContext} 
+	PointLightCommand temp{
+		{pPointLightCB3s},
+		{
+			Texture2D{pDevice, pContext},
+			Texture2D{pDevice, pContext},
+			Texture2D{pDevice, pContext},
+			Texture2D{pDevice, pContext},
+			Texture2D{pDevice, pContext},
+			Texture2D{pDevice, pContext}
+		}
 	};
 	pointLightCommands.push_back(std::move(temp));
 }
@@ -108,7 +115,6 @@ void Graphics::ExecuteCommands()
 		RenderTargetView renderForDepth{ pDevice,pContext };
 		renderForDepth.Load(vector<Texture2D*>{}, &i.shadowMap);
 		renderForDepth.Bind();
-		renderForDepth.ClearRTVsAndDSV();
 		//灯光作为相机
 		i.spotLightCB3->SetBindSlot(2u);
 		i.spotLightCB3->Bind();
@@ -127,28 +133,29 @@ void Graphics::ExecuteCommands()
 	}
 	for (PointLightCommand& i : pointLightCommands)
 	{
- 		//i.shadowMap.LoadForCubeDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
-// 		RenderTargetView renderForDepth{ pDevice,pContext };
-//  		renderForDepth.Load(vector<Texture2D*>{}, & i.shadowMap);
-//  		renderForDepth.Bind();
-// 		renderForDepth.ClearRTVsAndDSV();
-//  		//灯光作为相机
-//  		i.pPointLightCB3s[0]->SetBindSlot(2u);
-//  		i.pPointLightCB3s[0]->Bind();
-//  		i.pPointLightCB3s[0]->SetBindSlot(3u);
-// 		//绘制深度
-// 		for (MeshCommand& j : meshCommands)
-// 		{
-// 			j.pModelTransCB0->Bind();
-// 			j.pMaterial->BindVSforShadowCaster();
-// 			PixelShader emptyPS{ pDevice,pContext };
-// 			emptyPS.Bind();
-// 			j.pMesh->Draw();
-// 		}
-		//shadowMap转换 ： DSVtex2D to SRVtex2D
-		//i.shadowMap.LoadForRTVandSRV(i.shadowMap);
+		for (int j = 0; j < 6; j++)
+		{
+			i.shadowMap[j].LoadForDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
+			RenderTargetView renderForDepth{ pDevice,pContext };
+			renderForDepth.Load(vector<Texture2D*>{}, &i.shadowMap[j]);
+			renderForDepth.Bind();
+			//灯光作为相机
+			i.pPointLightCB3s[j]->SetBindSlot(2u);
+			i.pPointLightCB3s[j]->Bind();
+			i.pPointLightCB3s[j]->SetBindSlot(3u);
+			//绘制深度
+			for (MeshCommand& k : meshCommands)
+			{
+				k.pModelTransCB0->Bind();
+				k.pMaterial->BindVSforShadowCaster();
+				PixelShader emptyPS{ pDevice,pContext };
+				emptyPS.Bind();
+				k.pMesh->Draw();
+			}
+			//shadowMap转换 ： DSVtex2D to SRVtex2D
+			//i.shadowMap.LoadForRTVandSRV(i.shadowMap);
+		}
 	}
-
 
 	
 
@@ -204,4 +211,5 @@ void Graphics::ExecuteCommands()
 	spotLightCommands.clear();
 	pointLightCommands.clear(); 
 }
+
 

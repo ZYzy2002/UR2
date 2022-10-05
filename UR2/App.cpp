@@ -50,7 +50,7 @@ App::App()
 	spotLights.rbegin()->LightColor = { 1, 0, 1, 3 };
 	//pointLight
 	pointLights.push_back(&support);
-	spotLights.rbegin()->transform.location = { 0,-0.2,1.5 };
+	pointLights.rbegin()->transform.location = { 0,-0.2,1.5 };
 }
 
 
