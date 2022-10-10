@@ -14,7 +14,8 @@ public:
 	RenderTargetView(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11DeviceContext> pContext);
 
 public:
-	void Load(vector<Texture2D*> pRTVtex2Ds, Texture2D* pDSVtex2D);	//DSVtex2D可以传空Texture2D
+	void Load_RTs_DSV_FromTexture2D(vector<Texture2D*> pRTVtex2Ds, Texture2D* pDSVtex2D);	//DSVtex2D可以传空Texture2D
+	void Load_DSV_FromTexture2D(Texture2D* pDSVtex2D);	//DSVtex2D可以传空Texture2D
 	void Bind();
 
 	void ClearRTVsAndDSV();

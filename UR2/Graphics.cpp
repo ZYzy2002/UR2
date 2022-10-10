@@ -44,7 +44,7 @@ Graphics::Graphics(HWND outputWindowHandle)
 	forDepth.LoadForDSV(1280u, 720u);
 
 	screen = make_shared<RenderTargetView>(pDevice, pContext);
-	screen->Load(vector<Texture2D*>{&forRTV}, &forDepth);
+	screen->Load_RTs_DSV_FromTexture2D(vector<Texture2D*>{&forRTV}, &forDepth);
 	screen->Bind();
 
 	//primitive topology
@@ -113,7 +113,7 @@ void Graphics::ExecuteCommands()
 	{
 		i.shadowMap.LoadForDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 		RenderTargetView renderForDepth{ pDevice,pContext };
-		renderForDepth.Load(vector<Texture2D*>{}, &i.shadowMap);
+		renderForDepth.Load_DSV_FromTexture2D(&i.shadowMap);
 		renderForDepth.Bind();
 		//灯光作为相机
 		i.spotLightCB3->SetBindSlot(2u);
@@ -137,7 +137,7 @@ void Graphics::ExecuteCommands()
 		{
 			i.shadowMap[j].LoadForDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 			RenderTargetView renderForDepth{ pDevice,pContext };
-			renderForDepth.Load(vector<Texture2D*>{}, &i.shadowMap[j]);
+			renderForDepth.Load_DSV_FromTexture2D(&i.shadowMap[j]);
 			renderForDepth.Bind();
 			//灯光作为相机
 			i.pPointLightCB3s[j]->SetBindSlot(2u);
@@ -186,7 +186,7 @@ void Graphics::ExecuteCommands()
 				//混合状态 OneOne
 				pRM->FindBlendState(L"BlendOneOne")->Bind();
 			}
-			//绑定 纹理
+			//绑定 阴影纹理
 			ShaderResourceView temp{ pDevice,pContext };
 			temp.Load(&j.shadowMap, 0u);
 			temp.Bind();

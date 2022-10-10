@@ -18,38 +18,27 @@ void PointLightComponent::Tick()
 	XMStoreFloat4(&tempf, temp);
 
 
-
-	//XMMatrixRotationQuaternion();
-	//Update LightCBuffer
+	//Update LightCBuffer  : L_VStoWS; L_WStovS; L_VStoCS; L_CStoVS; LightPosWS; LightDirWS; LightColor; LightRadius
 	XMMATRIX L_VStoWS[6]{}; //+X -X +Y -Y +Z -Z
-	L_VStoWS[0] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
-	L_VStoWS[1] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
-	L_VStoWS[2] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z)); 
-	L_VStoWS[3] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
-	L_VStoWS[4] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
-	L_VStoWS[5] = XMMatrixTranspose(
-		XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z));
+	for (int i = 0; i < 6; i++)
+	{
+		L_VStoWS[i] = XMMatrixTranspose(
+			trans.transM[i]
+			*XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z)
+			
+		);
+	}
 
 	XMMATRIX L_WStoVS[6]{ };
 	for (int i = 0; i < 6; i++)
 	{
 		L_WStoVS[i] = XMMatrixInverse(nullptr, L_VStoWS[i]);
 	}
-
 	XMFLOAT4 LightDirWS[6]{};
 	for (int i = 0; i < 6; i++)
 	{
 		XMStoreFloat4(&LightDirWS[i], XMVector4Transform(XMVECTOR{ 0,0,-1.f,0.f }, XMMatrixTranspose(L_VStoWS[i])));
 	}
-	/*XMStoreFloat4(&LightDirWS, XMVector4Transform(XMVECTOR{ 0,0,-1.f,0.f }, XMMatrixTranspose(L_VStoWS)));*/
-
-
-
 	XMMATRIX L_VStoCS = XMMatrixTranspose(
 		XMMatrixPerspectiveFovRH(XM_PIDIV2, 1, POINT_LIGHT_NEARZ, LightRadius.x));
 	XMMATRIX L_CStoVS = XMMatrixInverse(nullptr, L_VStoCS);
@@ -69,4 +58,21 @@ void PointLightComponent::Tick()
 
 	//add LightQueue
 	pSupport->pGfx->AddPointLight(lightTransCBs);
+}
+
+PointLightComponent::CubeMapTrans PointLightComponent::trans;
+
+PointLightComponent::CubeMapTrans::CubeMapTrans()
+{
+	for (XMMATRIX& i : transM)
+	{
+		i = XMMatrixIdentity();
+	}
+	//+X -X +Y -Y +Z -Z
+	transM[0] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 0, 1, 0 }, -XM_PIDIV2));
+	transM[1] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 0, 1, 0 }, XM_PIDIV2));
+	transM[2] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 1, 0, 0 }, XM_PIDIV2));
+	transM[3] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 1, 0, 0 }, -XM_PIDIV2));
+	transM[4] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 0, 1, 0 }, XM_PI));
+	transM[5] = XMMatrixIdentity();
 }

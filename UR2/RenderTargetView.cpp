@@ -6,7 +6,7 @@ RenderTargetView::RenderTargetView(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11De
 
 }
 
-void RenderTargetView::Load(vector<Texture2D*> pRTVtex2Ds, Texture2D* pDSVtex2D)
+void RenderTargetView::Load_RTs_DSV_FromTexture2D(vector<Texture2D*> pRTVtex2Ds, Texture2D* pDSVtex2D)
 {
 	for (UINT i = 0; i < pRTVtex2Ds.size(); ++i)
 	{
@@ -24,6 +24,14 @@ void RenderTargetView::Load(vector<Texture2D*> pRTVtex2Ds, Texture2D* pDSVtex2D)
 		pDSV = nullptr;
 	}
 
+	ClearRTVsAndDSV();//创建后，清除DepthValue为1，
+}
+void RenderTargetView::Load_DSV_FromTexture2D(Texture2D* pDSVtex2D)
+{
+	if (pDSVtex2D->GetTex2D() != nullptr)
+	{
+		pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), nullptr, &pDSV);
+	}
 	ClearRTVsAndDSV();//创建后，清除DepthValue为1，
 }
 
