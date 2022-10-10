@@ -52,7 +52,9 @@ public:
 		wstring fileName_positiveY, wstring fileName_negativeY,
 		wstring fileName_positiveZ, wstring fileName_negativeZ);
 
-	void LoadForDSV(UINT width, UINT height);
+	void Load_For_DSV(UINT width, UINT height);		//用于 各个渲染模型 深度比较 tex2D
+	void Load_For_DSV_SRV(UINT width, UINT height);	//用于阴影映射的 深度tex2D
+
 	void LoadForRTVandSRV(UINT width, UINT height);
 	void LoadForRTVandSRV(Texture2D& DSV);
 	//void Load();

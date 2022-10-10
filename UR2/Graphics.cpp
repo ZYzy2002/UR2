@@ -41,7 +41,7 @@ Graphics::Graphics(HWND outputWindowHandle)
 	Texture2D forRTV{ pDevice,pContext };
 	pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &forRTV.GetTex2D());
 	Texture2D forDepth{ pDevice,pContext };
-	forDepth.LoadForDSV(1280u, 720u);
+	forDepth.Load_For_DSV(1280u, 720u);
 
 	screen = make_shared<RenderTargetView>(pDevice, pContext);
 	screen->Load_RTs_DSV_FromTexture2D(vector<Texture2D*>{&forRTV}, &forDepth);
@@ -111,7 +111,7 @@ void Graphics::ExecuteCommands()
 	renderToShadowVP.Bind();
 	for (SpotLightCommand& i : spotLightCommands)
 	{
-		i.shadowMap.LoadForDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
+		i.shadowMap.Load_For_DSV_SRV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 		RenderTargetView renderForDepth{ pDevice,pContext };
 		renderForDepth.Load_DSV_FromTexture2D(&i.shadowMap);
 		renderForDepth.Bind();
@@ -129,13 +129,13 @@ void Graphics::ExecuteCommands()
 			j.pMesh->Draw();
 		}
 		//shadowMap转换 ： DSVtex2D to SRVtex2D
-		i.shadowMap.LoadForRTVandSRV(i.shadowMap);
+		//i.shadowMap.LoadForRTVandSRV(i.shadowMap);
 	}
 	for (PointLightCommand& i : pointLightCommands)
 	{
 		for (int j = 0; j < 6; j++)
 		{
-			i.shadowMap[j].LoadForDSV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
+			i.shadowMap[j].Load_For_DSV_SRV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 			RenderTargetView renderForDepth{ pDevice,pContext };
 			renderForDepth.Load_DSV_FromTexture2D(&i.shadowMap[j]);
 			renderForDepth.Bind();
@@ -188,7 +188,7 @@ void Graphics::ExecuteCommands()
 			}
 			//绑定 阴影纹理
 			ShaderResourceView temp{ pDevice,pContext };
-			temp.Load(&j.shadowMap, 0u);
+			temp.LoadDSVTex2D(&j.shadowMap, 0u);
 			temp.Bind();
 			pRM->FindSampler(L"Border")->Bind();
 			//绑定 灯光CB3

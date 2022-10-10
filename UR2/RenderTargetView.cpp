@@ -30,7 +30,12 @@ void RenderTargetView::Load_DSV_FromTexture2D(Texture2D* pDSVtex2D)
 {
 	if (pDSVtex2D->GetTex2D() != nullptr)
 	{
-		pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), nullptr, &pDSV);
+		D3D11_DEPTH_STENCIL_VIEW_DESC desc{};
+		desc.Format = DXGI_FORMAT_D32_FLOAT;
+		desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		desc.Flags = 0u;
+		desc.Texture2D.MipSlice = 0u;
+		pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), &desc, &pDSV);
 	}
 	ClearRTVsAndDSV();//创建后，清除DepthValue为1，
 }

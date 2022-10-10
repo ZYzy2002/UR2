@@ -14,6 +14,7 @@ public:
 
 public:
 	void Load(Texture2D* tex2D, UINT slot);
+	void LoadDSVTex2D(Texture2D* tex2D, UINT slot);
 	void Bind();	//check pointer null
 	void BindVS();
 	void BindPS();

@@ -107,7 +107,23 @@ void Texture2D::LoadFromFileForSRV(wstring fileName_positiveX, wstring fileName_
 	HR(pDevice->CreateTexture2D(&texCube_Desc, initia, &pTexture2D));
 }
 
-void Texture2D::LoadForDSV(UINT width, UINT height)
+void Texture2D::Load_For_DSV_SRV(UINT width, UINT height)
+{
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.MipLevels = 1u;
+	texDesc.ArraySize = 1u;
+	texDesc.Format =  DXGI_FORMAT_R32_TYPELESS;
+	texDesc.SampleDesc.Count = 1u;
+	texDesc.SampleDesc.Quality = 0u;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.MiscFlags = 0u;
+	texDesc.CPUAccessFlags = 0u;
+	HR(pDevice->CreateTexture2D(&texDesc, nullptr, &pTexture2D));
+}
+void Texture2D::Load_For_DSV(UINT width, UINT height)
 {
 	D3D11_TEXTURE2D_DESC texDesc{};
 	texDesc.Width = width;
@@ -119,6 +135,8 @@ void Texture2D::LoadForDSV(UINT width, UINT height)
 	texDesc.SampleDesc.Quality = 0u;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	texDesc.MiscFlags = 0u;
+	texDesc.CPUAccessFlags = 0u;
 	HR(pDevice->CreateTexture2D(&texDesc, nullptr, &pTexture2D));
 }
 
