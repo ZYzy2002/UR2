@@ -107,22 +107,7 @@ void Texture2D::LoadFromFileForSRV(wstring fileName_positiveX, wstring fileName_
 	HR(pDevice->CreateTexture2D(&texCube_Desc, initia, &pTexture2D));
 }
 
-void Texture2D::Load_For_DSV_SRV(UINT width, UINT height)
-{
-	D3D11_TEXTURE2D_DESC texDesc{};
-	texDesc.Width = width;
-	texDesc.Height = height;
-	texDesc.MipLevels = 1u;
-	texDesc.ArraySize = 1u;
-	texDesc.Format =  DXGI_FORMAT_R32_TYPELESS;
-	texDesc.SampleDesc.Count = 1u;
-	texDesc.SampleDesc.Quality = 0u;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	texDesc.MiscFlags = 0u;
-	texDesc.CPUAccessFlags = 0u;
-	HR(pDevice->CreateTexture2D(&texDesc, nullptr, &pTexture2D));
-}
+
 void Texture2D::Load_For_DSV(UINT width, UINT height)
 {
 	D3D11_TEXTURE2D_DESC texDesc{};
@@ -139,53 +124,68 @@ void Texture2D::Load_For_DSV(UINT width, UINT height)
 	texDesc.CPUAccessFlags = 0u;
 	HR(pDevice->CreateTexture2D(&texDesc, nullptr, &pTexture2D));
 }
-
-void Texture2D::LoadForRTVandSRV(UINT width, UINT height)
+void Texture2D::Load_For_DSV_SRV(UINT width, UINT height)
 {
-	D3D11_TEXTURE2D_DESC tex2D_Desc;
-	tex2D_Desc.Width = width;
-	tex2D_Desc.Height = height;
-	tex2D_Desc.MipLevels = 0u;															//一整套mipmap
-	tex2D_Desc.ArraySize = 1u;
-	tex2D_Desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	tex2D_Desc.SampleDesc.Count = 1u;
-	tex2D_Desc.SampleDesc.Quality = 0u;
-	tex2D_Desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	tex2D_Desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_FLAG::D3D11_BIND_RENDER_TARGET;
-	tex2D_Desc.MiscFlags = D3D11_RESOURCE_MISC_FLAG::D3D11_RESOURCE_MISC_GENERATE_MIPS;	//使用 mipmap
-	tex2D_Desc.CPUAccessFlags = 0u;
-	HR(pDevice->CreateTexture2D(&tex2D_Desc, nullptr, &pTexture2D));
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.MipLevels = 1u;
+	texDesc.ArraySize = 1u;
+	texDesc.Format =  DXGI_FORMAT_R32_TYPELESS;
+	texDesc.SampleDesc.Count = 1u;
+	texDesc.SampleDesc.Quality = 0u;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.MiscFlags = 0u;
+	texDesc.CPUAccessFlags = 0u;
+	HR(pDevice->CreateTexture2D(&texDesc, nullptr, &pTexture2D));
 }
-
-void Texture2D::LoadForRTVandSRV(Texture2D& DSV)
+void Texture2D::Load_For_DSV_SRV_Cube(UINT width, UINT height)
 {
-	if (DSV.pTexture2D == nullptr)
-	{
-		assert(false && L"深度图转换 为 贴图，没有输入");
-		return;
-	}
-	D3D11_TEXTURE2D_DESC originalDesc;
-	DSV.pTexture2D->GetDesc(&originalDesc);
-	assert(originalDesc.Format == DXGI_FORMAT_D32_FLOAT);
-
-	D3D11_TEXTURE2D_DESC tex2D_Desc;
-	tex2D_Desc.Width = originalDesc.Width;
-	tex2D_Desc.Height = originalDesc.Height;
-	tex2D_Desc.MipLevels = 1u; 
-	tex2D_Desc.ArraySize = 1u;
-	tex2D_Desc.Format = DXGI_FORMAT_R32_FLOAT;
-	tex2D_Desc.SampleDesc.Count = 1u;
-	tex2D_Desc.SampleDesc.Quality = 0u;
-	tex2D_Desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	tex2D_Desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_FLAG::D3D11_BIND_RENDER_TARGET;
-	/*shadowmap作为SRV使用不需要mipmap，深度值downSample没有意义，
-	因为 平均深度深度（来自高mipmap）与 渲染模型时深度比较，值为0或1，而不是0和1 之间的值
-	* */
-	tex2D_Desc.MiscFlags = 0u;			
-	tex2D_Desc.CPUAccessFlags = 0u;
-	ComPtr<ID3D11Texture2D> temp;	//防止传入的 DSV 和 this 是同一对象。create时 会release this->pTexture2D
-	HR(pDevice->CreateTexture2D(&tex2D_Desc, nullptr, &temp));
-
-	pContext->CopyResource(temp.Get(), DSV.pTexture2D.Get());
-	this->pTexture2D = temp;
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.MipLevels = 1u;
+	texDesc.ArraySize = 6u;
+	texDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	texDesc.SampleDesc.Count = 1u;
+	texDesc.SampleDesc.Quality = 0u;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	texDesc.CPUAccessFlags = 0u;
+	HR(pDevice->CreateTexture2D(&texDesc, nullptr, &pTexture2D));
 }
+// 
+// void Texture2D::LoadForRTVandSRV(Texture2D& DSV)
+// {
+// 	if (DSV.pTexture2D == nullptr)
+// 	{
+// 		assert(false && L"深度图转换 为 贴图，没有输入");
+// 		return;
+// 	}
+// 	D3D11_TEXTURE2D_DESC originalDesc;
+// 	DSV.pTexture2D->GetDesc(&originalDesc);
+// 	assert(originalDesc.Format == DXGI_FORMAT_D32_FLOAT);
+// 
+// 	D3D11_TEXTURE2D_DESC tex2D_Desc;
+// 	tex2D_Desc.Width = originalDesc.Width;
+// 	tex2D_Desc.Height = originalDesc.Height;
+// 	tex2D_Desc.MipLevels = 1u; 
+// 	tex2D_Desc.ArraySize = 1u;
+// 	tex2D_Desc.Format = DXGI_FORMAT_R32_FLOAT;
+// 	tex2D_Desc.SampleDesc.Count = 1u;
+// 	tex2D_Desc.SampleDesc.Quality = 0u;
+// 	tex2D_Desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+// 	tex2D_Desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_FLAG::D3D11_BIND_RENDER_TARGET;
+// 	/*shadowmap作为SRV使用不需要mipmap，深度值downSample没有意义，
+// 	因为 平均深度深度（来自高mipmap）与 渲染模型时深度比较，值为0或1，而不是0和1 之间的值
+// 	* */
+// 	tex2D_Desc.MiscFlags = 0u;			
+// 	tex2D_Desc.CPUAccessFlags = 0u;
+// 	ComPtr<ID3D11Texture2D> temp;	//防止传入的 DSV 和 this 是同一对象。create时 会release this->pTexture2D
+// 	HR(pDevice->CreateTexture2D(&tex2D_Desc, nullptr, &temp));
+// 
+// 	pContext->CopyResource(temp.Get(), DSV.pTexture2D.Get());
+// 	this->pTexture2D = temp;
+// }

@@ -4,7 +4,7 @@ cbuffer CB0 : register(b0)
     matrix WStoMS;
 }
 
-cbuffer CB2 : register(b2)
+cbuffer CB2 : register(b2)      //Camera 或 shadowMapLight
 {
     matrix VStoWS;
     matrix WStoVS;
@@ -29,9 +29,12 @@ cbuffer CB3 : register(b3)
     
     float4 LightColor; //颜色 强度 RGB
     float4 LightRadius; //衰减相关  R
+    
+    int4 LightType;
 }
 
-Texture2D _ShadowMap : register(t0);
+Texture2D _ShadowMapSpot : register(t0);
+TextureCube _ShadowMapPoint : register(t1);
 SamplerState _Border : register(s0);
 #define _ShadowMap_Precision 1024.f
 

@@ -20,7 +20,9 @@ std::shared_ptr<ConstantBuffer> LightComponent::CreateLightCBuffer_Initialize()
 		string{ "LightDirWS" }, ConstantBuffer::ParaType::FLOAT4,
 
 		string{ "LightColor" }, ConstantBuffer::ParaType::FLOAT4,
-		string{ "LightRadius" }, ConstantBuffer::ParaType::FLOAT4
+		string{ "LightRadius" }, ConstantBuffer::ParaType::FLOAT4,
+
+		string{ "LightType" }, ConstantBuffer::ParaType::INT4
 	);
 	lightTransCB->SetMatrix("L_VStoWS", XMMatrixIdentity());
 	lightTransCB->SetMatrix("L_WStoVS", XMMatrixIdentity());

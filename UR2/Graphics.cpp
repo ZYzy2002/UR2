@@ -91,14 +91,7 @@ void Graphics::AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLig
 {
 	PointLightCommand temp{
 		{pPointLightCB3s},
-		{
-			Texture2D{pDevice, pContext},
-			Texture2D{pDevice, pContext},
-			Texture2D{pDevice, pContext},
-			Texture2D{pDevice, pContext},
-			Texture2D{pDevice, pContext},
-			Texture2D{pDevice, pContext}
-		}
+		Texture2D{pDevice, pContext}
 	};
 	pointLightCommands.push_back(std::move(temp));
 }
@@ -128,16 +121,14 @@ void Graphics::ExecuteCommands()
 			emptyPS.Bind();
 			j.pMesh->Draw();
 		}
-		//shadowMap转换 ： DSVtex2D to SRVtex2D
-		//i.shadowMap.LoadForRTVandSRV(i.shadowMap);
 	}
 	for (PointLightCommand& i : pointLightCommands)
 	{
+		i.shadowMap.Load_For_DSV_SRV_Cube(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 		for (int j = 0; j < 6; j++)
 		{
-			i.shadowMap[j].Load_For_DSV_SRV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
 			RenderTargetView renderForDepth{ pDevice,pContext };
-			renderForDepth.Load_DSV_FromTexture2D(&i.shadowMap[j]);
+			renderForDepth.Load_DSV_FromTexture2DCube(&i.shadowMap, j);
 			renderForDepth.Bind();
 			//灯光作为相机
 			i.pPointLightCB3s[j]->SetBindSlot(2u);
@@ -152,8 +143,6 @@ void Graphics::ExecuteCommands()
 				emptyPS.Bind();
 				k.pMesh->Draw();
 			}
-			//shadowMap转换 ： DSVtex2D to SRVtex2D
-			//i.shadowMap.LoadForRTVandSRV(i.shadowMap);
 		}
 	}
 
@@ -193,14 +182,34 @@ void Graphics::ExecuteCommands()
 			pRM->FindSampler(L"Border")->Bind();
 			//绑定 灯光CB3
 			j.spotLightCB3->Bind();
-
+			//绘制mesh
 			i.pModelTransCB0->Bind();
 			i.pMaterial->Bind();
 			i.pMesh->Draw();
 
 			++lightIndex;
 		}
+		for (PointLightCommand& j : pointLightCommands)
+		{
+			if (lightIndex == 1u)
+			{
+				//混合状态 OneOne
+				pRM->FindBlendState(L"BlendOneOne")->Bind();
+			}
+			//绑定 阴影纹理
+			ShaderResourceView temp{ pDevice,pContext };
+			temp.LoadDSVTex2DCube(&j.shadowMap, 1u);
+			temp.Bind();
+			pRM->FindSampler(L"Border")->Bind();
+			//绑定 灯光CB3
+			j.pPointLightCB3s[0]->Bind();
+			//绘制mesh
+			i.pModelTransCB0->Bind();
+			i.pMaterial->Bind();
+			i.pMesh->Draw();
 
+			++lightIndex;
+		}
 		//混合状态 Replace
 		pRM->FindBlendState(L"BlendOneZero")->Bind();
 	}

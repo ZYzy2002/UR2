@@ -11,13 +11,13 @@ void RenderTargetView::Load_RTs_DSV_FromTexture2D(vector<Texture2D*> pRTVtex2Ds,
 	for (UINT i = 0; i < pRTVtex2Ds.size(); ++i)
 	{
 		ComPtr < ID3D11RenderTargetView> temp;
-		pDevice->CreateRenderTargetView(pRTVtex2Ds[i]->GetTex2D().Get(), nullptr, /*&pRTVs[i]*/&temp);
+		HR(pDevice->CreateRenderTargetView(pRTVtex2Ds[i]->GetTex2D().Get(), nullptr, /*&pRTVs[i]*/&temp));
 		pRTVs.push_back(temp);
 	}
 
 	if (pDSVtex2D->GetTex2D() != nullptr)
 	{
-		pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), nullptr, &pDSV);
+		HR(pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), nullptr, &pDSV));
 	}
 	else
 	{
@@ -31,11 +31,26 @@ void RenderTargetView::Load_DSV_FromTexture2D(Texture2D* pDSVtex2D)
 	if (pDSVtex2D->GetTex2D() != nullptr)
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC desc{};
-		desc.Format = DXGI_FORMAT_D32_FLOAT;
+		desc.Format = DXGI_FORMAT_D32_FLOAT;				//指定tex2D type R32_typeless to R32_FLOAT
 		desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		desc.Flags = 0u;
 		desc.Texture2D.MipSlice = 0u;
-		pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), &desc, &pDSV);
+		HR(pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), &desc, &pDSV));
+	}
+	ClearRTVsAndDSV();//创建后，清除DepthValue为1，
+}
+void RenderTargetView::Load_DSV_FromTexture2DCube(Texture2D* pDSVtex2D, UINT cubeMapIndex)
+{
+	if (pDSVtex2D->GetTex2D() != nullptr)
+	{
+		D3D11_DEPTH_STENCIL_VIEW_DESC desc{};
+		desc.Format = DXGI_FORMAT_D32_FLOAT;				//指定tex2D type R32_typeless to R32_FLOAT
+		desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+		desc.Flags = 0u;
+		desc.Texture2DArray.MipSlice = 0u;
+		desc.Texture2DArray.ArraySize = 1u;
+		desc.Texture2DArray.FirstArraySlice = cubeMapIndex;
+		HR(pDevice->CreateDepthStencilView(pDSVtex2D->GetTex2D().Get(), &desc, &pDSV));
 	}
 	ClearRTVsAndDSV();//创建后，清除DepthValue为1，
 }

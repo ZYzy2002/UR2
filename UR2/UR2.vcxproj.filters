@@ -210,9 +210,6 @@
     <Filter Include="Draw\State">
       <UniqueIdentifier>{596f8d15-eee8-4296-8efb-79f33711769f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Draw\View">
-      <UniqueIdentifier>{4e85bf76-48c2-4b32-b5d3-d7331a34de0e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Support">
       <UniqueIdentifier>{9c5f1a64-aaae-4c89-a71b-af3519222531}</UniqueIdentifier>
     </Filter>
@@ -227,6 +224,9 @@
     </Filter>
     <Filter Include="Component\LightComponent">
       <UniqueIdentifier>{883e36cc-25c9-491d-a170-77adba133753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draw\View">
+      <UniqueIdentifier>{4e85bf76-48c2-4b32-b5d3-d7331a34de0e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

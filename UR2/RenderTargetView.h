@@ -15,7 +15,8 @@ public:
 
 public:
 	void Load_RTs_DSV_FromTexture2D(vector<Texture2D*> pRTVtex2Ds, Texture2D* pDSVtex2D);	//DSVtex2D可以传空Texture2D
-	void Load_DSV_FromTexture2D(Texture2D* pDSVtex2D);	//DSVtex2D可以传空Texture2D
+	void Load_DSV_FromTexture2D(Texture2D* pDSVtex2D);					//使用tex2D (R32_TYPELESS to R32_FLOAT)
+	void Load_DSV_FromTexture2DCube(Texture2D* pDSVtex2D, UINT cubeMapIndex);	//使用tex2DCube中的一张 (R32_TYPELESS to R32_FLOAT)
 	void Bind();
 
 	void ClearRTVsAndDSV();

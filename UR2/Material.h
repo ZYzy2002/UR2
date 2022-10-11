@@ -7,7 +7,7 @@
 #include "ShaderResourceView.h"
 #include "SampleState.h"
 
-#define ShaderResourceViewSlotOffset 1u	//0：贴图直接从t1开始，
+#define ShaderResourceViewSlotOffset 2u	//0：贴图直接从t2开始，(t0用于SpotLightShadow t1用于PointLightShadow）
 
 class Material
 {

@@ -56,7 +56,7 @@ public:
 	list<SpotLightCommand> spotLightCommands;
 	//µã¹â
 	struct PointLightCommand { std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s;
-		std::array<Texture2D,6> shadowMap; 
+		Texture2D shadowMap; 
 	};
 	list<PointLightCommand> pointLightCommands;
 
