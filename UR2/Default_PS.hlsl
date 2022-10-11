@@ -19,12 +19,21 @@ float4 main(PSIn i) : SV_TARGET
     
     
     //shadow attenuation
-    float shadow = SpotLightShadow(posWS, _ShadowMapSpot, _Border);
+    float shadow;
+    if (LightType.x == 0)
+    {
+        shadow = SpotLightShadow(posWS, _ShadowMapSpot, _Border);
+    }
+    else
+    {
+        shadow = PointLightShadow(posWS, _ShadowMapPoint, _Border);
+    }
+    
     float atten = 1.0 / (0.5 * pow(length(LightPosWS.xyz - posWS.xyz), 2) + 1.0);
     
     //
     float3 albedo = _BaseColor.Sample(_Warp, uv) * _ColorTint;
-    float3 lightColor = LightColor.xyz * LightColor.w;
+    float3 lightColor = LightColor.xyz * LightColor.w ;
     
     //Lambert
     float3 LambertColor = lightColor /** albedo*/ * saturate(dot(normalWS, normalize(LightPosWS.xyz - posWS.xyz)));

@@ -27,11 +27,11 @@ App::App()
 	meshs.push_back(&support);
 	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 0u);
 	meshs.rbegin()->transform.scale = { 0.2,2,0.2 };
-	meshs.rbegin()->transform.location.z = 0.5f;
+	meshs.rbegin()->transform.location = { 1.5,0,-1.5 };
 	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
 	meshs.push_back(&support);
 	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 1u);
-	meshs.rbegin()->transform.scale = { 3,0.1,2 };
+	meshs.rbegin()->transform.scale = { 6,0.1,6 };
 	meshs.rbegin()->transform.location.y = -0.5f;
 	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
 
@@ -50,8 +50,8 @@ App::App()
 	spotLights.rbegin()->LightColor = { 1, 0, 1, 3 };
 	//pointLight
 	pointLights.push_back(&support);
-	pointLights.rbegin()->transform.location = { 0,-0.2,1.5 };
-	pointLights.rbegin()->LightColor = { 1, 1, 0, 3 };
+	pointLights.rbegin()->transform.location = { 0,0, 0 };
+	pointLights.rbegin()->LightColor = { 1, 1, 0, 1 };
 }
 
 

@@ -202,7 +202,7 @@ void Graphics::ExecuteCommands()
 			temp.Bind();
 			pRM->FindSampler(L"Border")->Bind();
 			//绑定 灯光CB3
-			j.pPointLightCB3s[0]->Bind();
+			j.pPointLightCB3s[5]->Bind();					//PointLight CB6 只绑定了最后一个-Z方向的CBuffer
 			//绘制mesh
 			i.pModelTransCB0->Bind();
 			i.pMaterial->Bind();
