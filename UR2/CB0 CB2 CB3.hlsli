@@ -102,15 +102,17 @@ static matrix cube[6] =
             0, -1, 0, 0,
             0, 0, 0, 1),
     //+z
-    matrix(-1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, -1, 0,
-            0, 0, 0, 1),
-    //-z
     matrix(1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
+            0, 0, 0, 1),
+    //-z, 实际WorldSpace +Z
+    matrix(-1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, -1, 0,
             0, 0, 0, 1)
+    
+    
 };
 
 float PointLightShadow(
@@ -119,7 +121,8 @@ float PointLightShadow(
     SamplerState shadowMapSamplerState)
 {
     float3 uvw_Light = normalize((posWS - LightPosWS).xyz);
-    matrix L_WStoVS_CubeFaceChoose = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uvw_Light.z = -uvw_Light.z;     //世界坐标到 CubeMap采样坐标系 （反向Z轴）
+    matrix PL_VStoCorrectVS = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     
     float3 cmpResult = float3(0, 0, 0);
     cmpResult.x += step(abs(uvw_Light.y), abs(uvw_Light.x));
@@ -132,44 +135,45 @@ float PointLightShadow(
     {
         if (step(0, uvw_Light.x))
         {
-            L_WStoVS_CubeFaceChoose = mul(cube[0], L_WStoVS);
+            PL_VStoCorrectVS = cube[0];
         }
         else
         {
-            L_WStoVS_CubeFaceChoose = mul(cube[1], L_WStoVS);
+            PL_VStoCorrectVS = cube[1];
         }
     }
     if (cmpResult.y == 2)
     {
         if (step(0, uvw_Light.y))
         {
-            L_WStoVS_CubeFaceChoose = mul(cube[2], L_WStoVS);
+            PL_VStoCorrectVS = cube[2];
         }
         else
         {
-            L_WStoVS_CubeFaceChoose = mul(cube[3], L_WStoVS);
+            PL_VStoCorrectVS = cube[3];
         }
     }
     if (cmpResult.z == 2)
     {
         if (step(0, uvw_Light.z))
         {
-            L_WStoVS_CubeFaceChoose = mul(cube[4], L_WStoVS);
+            PL_VStoCorrectVS = cube[4];
         }
         else
         {
-            L_WStoVS_CubeFaceChoose = mul(cube[5], L_WStoVS);
+            PL_VStoCorrectVS = cube[5];
         }
     }
     
     
-    float4 pos_LightVS = mul(posWS, L_WStoVS_CubeFaceChoose);
+    float4 pos_LightVS_PositiveZ = mul(posWS, L_WStoVS);
+    float4 pos_LightVS = mul(pos_LightVS_PositiveZ, PL_VStoCorrectVS);
     float4 pos_LightCS = mul(pos_LightVS, L_VStoCS);
     float4 pos_LightNDC = pos_LightCS / pos_LightCS.w;
     
     float light01Depth = shadowMap.Sample(shadowMapSamplerState, uvw_Light);
     
-    float shadow = step( pos_LightNDC.z, light01Depth + 0.00001);
+    float shadow = step(pos_LightNDC.z, light01Depth + 0.00001);
     
 
     return shadow;

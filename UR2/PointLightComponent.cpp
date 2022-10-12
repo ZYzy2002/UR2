@@ -75,6 +75,6 @@ PointLightComponent::CubeMapTrans::CubeMapTrans()
 	transM[1] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 0, 1, 0 }, XM_PIDIV2));
 	transM[2] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 1, 0, 0 }, XM_PIDIV2));
 	transM[3] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 1, 0, 0 }, -XM_PIDIV2));
-	transM[4] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 0, 1, 0 }, XM_PI));
-	transM[5] = XMMatrixIdentity();
+	transM[5] = XMMatrixRotationQuaternion(XMQuaternionRotationAxis({ 0, 1, 0 }, XM_PI));
+	transM[4] = XMMatrixIdentity();				//由于CubeMap 使用的是 左手系，所以捕获贴图时，交换 正负Z轴
 }

@@ -82,10 +82,10 @@
     <ClCompile Include="SpotLightComponent.cpp">
       <Filter>Component\LightComponent</Filter>
     </ClCompile>
-    <ClCompile Include="PointLightComponent.cpp">
+    <ClCompile Include="LightComponent.cpp">
       <Filter>Component\LightComponent</Filter>
     </ClCompile>
-    <ClCompile Include="LightComponent.cpp">
+    <ClCompile Include="PointLightComponent.cpp">
       <Filter>Component\LightComponent</Filter>
     </ClCompile>
   </ItemGroup>
