@@ -15,7 +15,7 @@ float4 main(PSIn i) : SV_TARGET
     
     float4 posWS = float4(i.posWS.xyz, 1);
     float3 normalWS = normalize(i.normalWS.xyz);
-    float2 uv = i.uv;
+    float2 uv = i.uv*10;
     
     
     //shadow attenuation
@@ -32,11 +32,11 @@ float4 main(PSIn i) : SV_TARGET
     float atten = 1.0 / (0.5 * pow(length(LightPosWS.xyz - posWS.xyz), 2) + 1.0);
     
     //
-    float3 albedo = _BaseColor.Sample(_Warp, uv) * _ColorTint;
+    float3 albedo = _BaseColor.Sample(SamplerState2, uv) * _ColorTint;
     float3 lightColor = LightColor.xyz * LightColor.w ;
     
     //Lambert
-    float3 LambertColor = lightColor /** albedo*/ * saturate(dot(normalWS, normalize(LightPosWS.xyz - posWS.xyz)));
+    float3 LambertColor = lightColor * albedo * saturate(dot(normalWS, normalize(LightPosWS.xyz - posWS.xyz)));
 
     //return float4(LambertColor, 1);
       

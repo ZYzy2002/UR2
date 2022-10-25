@@ -28,12 +28,12 @@ App::App()
 	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 0u);
 	meshs.rbegin()->transform.scale = { 0.2,2,0.2 };
 	meshs.rbegin()->transform.location = { 1,0,0.0 };
-	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
+	meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
 	meshs.push_back(&support);
 	meshs.rbegin()->SetMeshAndMaterial(L"Cube", L"Default", 1u);
 	meshs.rbegin()->transform.scale = { 6,0.1,6 };
 	meshs.rbegin()->transform.location.y = -0.5f;
-	//meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
+	meshs.rbegin()->GetMaterial()->GetParas()->SetFloat4("_ColorTint", { 1,1,1,1 });
 
 
 	//camera

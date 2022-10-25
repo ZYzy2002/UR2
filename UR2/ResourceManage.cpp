@@ -9,8 +9,8 @@ ResourceManage::ResourceManage(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11Device
 	CreateMesh(L"Cube");
 
 	//ÌùÍ¼
-	CreateTex2D(L"Default");
-	CreateTex2D(L"Noise");
+	//CreateTex2D(L"Default");
+	CreateTex2D(L"Default_BC");
 	
 	//SamplerState
 	CreateSampler(L"Warp", D3D11_TEXTURE_ADDRESS_WRAP, D3D11_FILTER_MIN_MAG_MIP_LINEAR);
@@ -18,7 +18,7 @@ ResourceManage::ResourceManage(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11Device
 
 	//Material
 	CreateMaterial(L"Default");
-	FindMaterial(L"Default", 0u)->SetSRV(FindTex2D(L"Noise"), FindSampler(L"Warp"), 0u);
+	FindMaterial(L"Default", 0u)->SetSRV(FindTex2D(L"Default_BC"), FindSampler(L"Warp"), 0u);
 
 	//Blend State
 	CreateBlendState(L"BlendOneOne", D3D11_BLEND_ONE, D3D11_BLEND_ONE);
