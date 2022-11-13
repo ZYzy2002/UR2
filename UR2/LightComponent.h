@@ -13,3 +13,9 @@ protected:
 	shared_ptr<ConstantBuffer> CreateLightCBuffer_Initialize();
 };
 
+enum class LightType
+{
+	SpotLight = 0,
+	PointLight,
+	DirectLight
+};

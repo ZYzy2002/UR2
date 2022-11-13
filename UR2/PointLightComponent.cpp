@@ -55,7 +55,7 @@ void PointLightComponent::Tick()
 		lightTransCBs[i]->SetMatrix("L_WStoVS", L_WStoVS[i]);
 		lightTransCBs[i]->SetFloat4("LightDirWS", LightDirWS[i]);
 
-		lightTransCBs[i]->SetInt4("LightType", XMINT4{ 1,0,0,0 });
+		lightTransCBs[i]->SetInt4("LightType", XMINT4{ int(LightType::PointLight),0,0,0 });
 	}
 
 	//add LightQueue

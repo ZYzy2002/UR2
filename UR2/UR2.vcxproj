@@ -158,6 +158,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="DepthStencilState.cpp" />
+    <ClCompile Include="DirectLightComponent.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="LightComponent.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="DepthStencilState.h" />
+    <ClInclude Include="DirectLightComponent.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="LightComponent.h" />

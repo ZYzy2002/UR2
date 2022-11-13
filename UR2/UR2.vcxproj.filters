@@ -88,6 +88,9 @@
     <ClCompile Include="PointLightComponent.cpp">
       <Filter>Component\LightComponent</Filter>
     </ClCompile>
+    <ClCompile Include="DirectLightComponent.cpp">
+      <Filter>Component\LightComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraComponent.h">
@@ -173,6 +176,9 @@
     </ClInclude>
     <ClInclude Include="StaticMesh.h">
       <Filter>Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectLightComponent.h">
+      <Filter>Component\LightComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

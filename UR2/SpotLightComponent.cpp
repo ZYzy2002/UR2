@@ -34,7 +34,7 @@ void SpotLightComponent::Tick()
 	lightTransCB->SetFloat4("LightColor", LightComponent::LightColor);
 	lightTransCB->SetFloat4("LightRadius", LightRadius);
 
-	lightTransCB->SetInt4("LightType", XMINT4{0,0,0,0});
+	lightTransCB->SetInt4("LightType", XMINT4{int(LightType::SpotLight),0,0,0});
 
 	pSupport->pGfx->AddSpotLight(lightTransCB);
 }

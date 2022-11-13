@@ -96,8 +96,14 @@ void Graphics::AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLig
 	pointLightCommands.push_back(std::move(temp));
 }
 
+void Graphics::AddDirectLight(shared_ptr<ConstantBuffer> pDirectLightCB3s)
+{
+	directLightCommands.push_back({ pDirectLightCB3s, {pDevice, pContext} });
+}
+
 void Graphics::ExecuteCommands()
 {
+	mutualCorrect();
 	//shadow map
 	ViewPort renderToShadowVP{ pDevice, pContext };
 	renderToShadowVP.Load(SHADOW_MAP_PRECISION, SHADOW_MAP_PRECISION);
@@ -221,4 +227,8 @@ void Graphics::ExecuteCommands()
 	pointLightCommands.clear(); 
 }
 
+void Graphics::mutualCorrect()
+{
+	//DirectLight L_VStoCS L_CStoVS
+}
 

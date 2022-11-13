@@ -59,12 +59,21 @@ public:
 		Texture2D shadowMap; 
 	};
 	list<PointLightCommand> pointLightCommands;
+	//Æ½ÐÐ¹â
+	struct DirectLightCommand { shared_ptr<ConstantBuffer> directLightCB3; Texture2D shadowMap; };
+	list<DirectLightCommand> directLightCommands;
 
 	void AddQueue(shared_ptr<ConstantBuffer> pModelTrans, 
 		StaticMesh* pMesh, Material* pMaterial);
 	void SetCamera(shared_ptr<ConstantBuffer> pCameraCB2);
 	void AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3);
 	void AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s);
+	void AddDirectLight(shared_ptr<ConstantBuffer> pDirectLightCB3s);
+
+public:
 	void ExecuteCommands();
+private:
+	void mutualCorrect();
+
 };
 
