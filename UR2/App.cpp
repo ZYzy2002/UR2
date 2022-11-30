@@ -48,10 +48,16 @@ App::App()
 	spotLights.push_back(&support);
 	spotLights.rbegin()->transform.location = { -0.5,-0.2,1.5 };
 	spotLights.rbegin()->LightColor = { 1, 0, 1, 3 };
+
 	//pointLight
 	pointLights.push_back(&support);
 	pointLights.rbegin()->transform.location = { 0, 1, -0.5 };
 	pointLights.rbegin()->LightColor = { 1, 1, 0, 1 };
+
+	//DirectLight
+	directLights.push_back(&support);
+	directLights.rbegin()->LightColor = { 0, 1, 0, 1 };
+	directLights.rbegin()->transform.rotation = { XM_PIDIV2 / 6, 0, 0 };
 }
 
 
@@ -77,6 +83,10 @@ void App::Tick()
 		i.Tick();
 	}
 	for (auto& i : pointLights)
+	{
+		i.Tick();
+	}
+	for (auto& i : directLights)
 	{
 		i.Tick();
 	}

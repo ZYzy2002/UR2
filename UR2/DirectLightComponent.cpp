@@ -10,8 +10,8 @@ void DirectLightComponent::Tick()
 {
 	XMMATRIX L_VStoWS = XMMatrixTranspose(
 		XMMatrixRotationRollPitchYaw(transform.rotation.x, transform.rotation.y, transform.rotation.z)
-		* XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z)
-	);
+		//* XMMatrixTranslation(transform.location.x, transform.location.y, transform.location.z)
+	);// translation ÔÚGraphic::mutualCorrectÐ´Èë
 	XMMATRIX L_WStoVS = XMMatrixInverse(nullptr, L_VStoWS);
 // 	XMMATRIX L_VStoCS = XMMatrixTranspose(
 // 		XMMatrixPerspectiveFovRH(LightfovAngle, 1, SPOT_LIGHT_NEARZ, LightRadius.x)
@@ -31,4 +31,6 @@ void DirectLightComponent::Tick()
  	lightTransCB->SetFloat4("LightColor", LightComponent::LightColor);
 	lightTransCB->SetFloat4("LightRadius", XMFLOAT4{ 0,0,0,0 });
  	lightTransCB->SetInt4("LightType", XMINT4{ int(LightType::DirectLight),0,0,0 });
+
+	pSupport->pGfx->AddDirectLight(lightTransCB);
 }

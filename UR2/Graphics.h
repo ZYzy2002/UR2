@@ -52,7 +52,8 @@ public:
 	//相机
 	shared_ptr<ConstantBuffer> pCameraCB2;
 	//聚光
-	struct SpotLightCommand { shared_ptr<ConstantBuffer> spotLightCB3; Texture2D shadowMap; };
+	struct SpotLightCommand { shared_ptr<ConstantBuffer> spotLightCB3; 
+		Texture2D shadowMap; };
 	list<SpotLightCommand> spotLightCommands;
 	//点光
 	struct PointLightCommand { std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s;
@@ -60,7 +61,8 @@ public:
 	};
 	list<PointLightCommand> pointLightCommands;
 	//平行光
-	struct DirectLightCommand { shared_ptr<ConstantBuffer> directLightCB3; Texture2D shadowMap; };
+	struct DirectLightCommand { shared_ptr<ConstantBuffer> DirectLightCB3; 
+		Texture2D shadowMap; };
 	list<DirectLightCommand> directLightCommands;
 
 	void AddQueue(shared_ptr<ConstantBuffer> pModelTrans, 
@@ -68,7 +70,7 @@ public:
 	void SetCamera(shared_ptr<ConstantBuffer> pCameraCB2);
 	void AddSpotLight(shared_ptr<ConstantBuffer> pSpotLightCB3);
 	void AddPointLight(std::array<shared_ptr<ConstantBuffer>, 6> pPointLightCB3s);
-	void AddDirectLight(shared_ptr<ConstantBuffer> pDirectLightCB3s);
+	void AddDirectLight(shared_ptr<ConstantBuffer> DirectLightCB3);
 
 public:
 	void ExecuteCommands();

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Graphics.h"
 
 #define SHADOW_MAP_PRECISION 1024.f
@@ -151,6 +152,26 @@ void Graphics::ExecuteCommands()
 			}
 		}
 	}
+	for (DirectLightCommand& i : directLightCommands)
+	{
+		i.shadowMap.Load_For_DSV_SRV(renderToShadowVP.vp.Width, renderToShadowVP.vp.Height);
+		RenderTargetView renderForDepth{ pDevice, pContext };
+		renderForDepth.Load_DSV_FromTexture2D(&i.shadowMap);
+		renderForDepth.Bind();
+
+		i.DirectLightCB3->SetBindSlot(2u);
+		i.DirectLightCB3->Bind();
+		i.DirectLightCB3->SetBindSlot(3u);
+
+		for (MeshCommand& j : meshCommands)
+		{
+			j.pModelTransCB0->Bind();
+			j.pMaterial->BindVSforShadowCaster();
+			PixelShader emptyPS{ pDevice,pContext };
+			emptyPS.Bind();
+			j.pMesh->Draw();
+		}
+	}
 
 	
 
@@ -216,6 +237,27 @@ void Graphics::ExecuteCommands()
 
 			++lightIndex;
 		}
+		for (DirectLightCommand& j : directLightCommands)
+		{
+			if (lightIndex == 1u)
+			{
+				//混合状态 OneOne
+				pRM->FindBlendState(L"BlendOneOne")->Bind();
+			}
+			//绑定 阴影纹理
+			ShaderResourceView temp{ pDevice,pContext };
+			temp.LoadDSVTex2D(&j.shadowMap, 0u);
+			temp.Bind();
+			pRM->FindSampler(L"Border")->Bind();
+			//绑定 灯光CB3
+			j.DirectLightCB3->Bind();					//PointLight CB6 只绑定了最后一个-Z方向的CBuffer
+			//绘制mesh
+			i.pModelTransCB0->Bind();
+			i.pMaterial->Bind();
+			i.pMesh->Draw();
+
+			++lightIndex;
+		}
 		//混合状态 Replace
 		pRM->FindBlendState(L"BlendOneZero")->Bind();
 	}
@@ -225,10 +267,79 @@ void Graphics::ExecuteCommands()
 	pCameraCB2 = nullptr;
 	spotLightCommands.clear();
 	pointLightCommands.clear(); 
+	directLightCommands.clear();
 }
 
 void Graphics::mutualCorrect()
 {
-	//DirectLight L_VStoCS L_CStoVS
+	//DirectLight L_VStoWS L_WStoVS L_VStoCS L_CStoVS
+	XMMATRIX Camera_VStoCS = pCameraCB2->GetMatrix("VStoCS");	//没有转置，列有效
+	XMFLOAT4X4 Camera_VStoCS_float4x4;
+	DirectX::XMStoreFloat4x4(&Camera_VStoCS_float4x4, Camera_VStoCS);
+	float Row3_Column3 = Camera_VStoCS_float4x4._33;
+	float Row3_Column4 = Camera_VStoCS_float4x4._34;
+	float Row2_Column2 = Camera_VStoCS_float4x4._22;
+	float Row1_Column1 = Camera_VStoCS_float4x4._11;
+
+	float nearZ = Row3_Column4 / Row3_Column3;
+	float farZ = Row3_Column4 / (Row3_Column3 + 1.0f);
+	float tan_FOV_div_2 = 1 / Row2_Column2;
+	float aspect = Row2_Column2 / Row1_Column1;
+
+	XMFLOAT3 Frustum_VS[8] =
+	{
+		{nearZ * tan_FOV_div_2 * aspect, nearZ * tan_FOV_div_2, -nearZ },
+		{-nearZ * tan_FOV_div_2 * aspect, nearZ * tan_FOV_div_2, -nearZ },
+		{-nearZ * tan_FOV_div_2 * aspect, -nearZ * tan_FOV_div_2, -nearZ },
+		{nearZ * tan_FOV_div_2 * aspect, -nearZ * tan_FOV_div_2, -nearZ },
+		{farZ * tan_FOV_div_2 * aspect, farZ * tan_FOV_div_2, -farZ },
+		{-farZ * tan_FOV_div_2 * aspect, farZ * tan_FOV_div_2, -farZ },
+		{-farZ * tan_FOV_div_2 * aspect, -farZ * tan_FOV_div_2, -farZ },
+		{farZ * tan_FOV_div_2 * aspect, -farZ * tan_FOV_div_2, -farZ },
+	};
+	XMFLOAT3 Frustum_MS[8]{};
+	for (int i = 0; i < 8; i++)
+	{
+		XMFLOAT4 float4{ Frustum_VS[i].x, Frustum_VS[i].y, Frustum_VS[i].z, 1 };
+		XMVECTOR temp = XMLoadFloat4(&float4);
+		temp = XMVector4Transform(temp, XMMatrixTranspose( pCameraCB2->GetMatrix("VStoWS")));
+		XMStoreFloat3(&Frustum_MS[i], temp);
+	}
+
+	for (DirectLightCommand& i : directLightCommands)
+	{
+		XMFLOAT3 Frustum_LS[8]{};
+		for (int j = 0; j < 8; j++)
+		{
+			XMFLOAT4 float4{ Frustum_MS[j].x, Frustum_MS[j].y, Frustum_MS[j].z, 1 };
+			XMVECTOR temp = XMLoadFloat4(&float4);
+			temp = XMVector4Transform(temp, XMMatrixTranspose(i.DirectLightCB3->GetMatrix("L_WStoVS")));
+			XMStoreFloat3(&Frustum_LS[j], temp);
+		}
+		std::pair<XMFLOAT3*,XMFLOAT3*> minmaxX = 
+			std::minmax_element(Frustum_LS, Frustum_LS + 8, [](XMFLOAT3 a, XMFLOAT3 b)->bool {return a.x < b.x; });
+		std::pair<XMFLOAT3*,XMFLOAT3*> minmaxY = 
+			std::minmax_element(Frustum_LS, Frustum_LS + 8, [](XMFLOAT3 a, XMFLOAT3 b)->bool {return a.y < b.y; });
+		std::pair<XMFLOAT3*,XMFLOAT3*> minmaxZ = 
+			std::minmax_element(Frustum_LS, Frustum_LS + 8, [](XMFLOAT3 a, XMFLOAT3 b)->bool {return a.z < b.z; });
+		float minX = std::get<0>(minmaxX)->x;
+		float maxX = std::get<1>(minmaxX)->x;
+		float minY = std::get<0>(minmaxY)->y;
+		float maxY = std::get<1>(minmaxY)->y;
+		float minZ = std::get<0>(minmaxZ)->z;
+		float maxZ = std::get<1>(minmaxZ)->z;
+		maxZ += 20;
+
+		XMMATRIX L_VStoWS = XMMatrixTranspose(
+			XMMatrixTranslation((minX + maxX) / 2.f, (minY + maxY) / 2.f, maxZ) 
+			*XMMatrixTranspose(i.DirectLightCB3->GetMatrix("L_VStoWS")) );
+		XMMATRIX L_WStoVS = XMMatrixInverse(nullptr, L_VStoWS);
+		XMMATRIX L_CStoVS = XMMatrixTranspose(XMMatrixScaling((maxX - minX) / 2.0f, (maxY - minY) / 2.0f, -(maxZ - minZ)));//考虑 xy轴[-1,1],z轴[0,1]
+		XMMATRIX L_VStoCS = XMMatrixInverse(nullptr,L_CStoVS);
+		i.DirectLightCB3->SetMatrix("L_VStoWS", L_VStoWS);
+		i.DirectLightCB3->SetMatrix("L_WStoVS", L_WStoVS);
+		i.DirectLightCB3->SetMatrix("L_CStoVS", L_CStoVS);
+		i.DirectLightCB3->SetMatrix("L_VStoCS", L_VStoCS);
+	}
 }
 

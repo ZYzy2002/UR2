@@ -25,7 +25,7 @@ cbuffer CB3 : register(b3)
     matrix L_CStoVS;
     
     float4 LightPosWS;
-    float4 LightDirWS; //灯光的 -z轴 (不是 光照计算时的 lightDir）
+    float4 LightDirWS; //灯光的 -z轴 (不是 SpotPoint光照计算时的 lightDir）
     
     float4 LightColor; //颜色 强度 RGB
     float4 LightRadius; //衰减相关  R
@@ -33,8 +33,8 @@ cbuffer CB3 : register(b3)
     int4 LightType;
 }
 
-Texture2D _ShadowMapSpot : register(t0);
-TextureCube _ShadowMapPoint : register(t1);
+Texture2D _ShadowMapSpot : register(t0);    //Spot和DirectLight都使用这个t0
+TextureCube _ShadowMapPoint : register(t1);//Spot和Point不会同时运行，所以可以使用同一个插槽，但同一个hlsl文件一个插槽只能写一次
 SamplerState _Border : register(s0);
 #define _ShadowMap_Precision 1024.f
 
@@ -176,5 +176,27 @@ float PointLightShadow(
     float shadow = step(pos_LightNDC.z, light01Depth + 0.00001);
     
 
+    return shadow;
+}
+
+float DirectLightShadow(
+    float4 posWS,
+    Texture2D shadowMap,
+    SamplerState shadowMapSamplerState
+)
+{
+    float4 pos_LightVS = mul(posWS, L_WStoVS);
+    float4 pos_LightCS = mul(pos_LightVS, L_VStoCS);
+    float4 pos_LightNDC = pos_LightCS / pos_LightCS.w;
+    float2 uv_Light = float2(pos_LightNDC.x / 2.0f + 0.5, -pos_LightNDC.y / 2.0f + 0.5); //注意 y 方向有负号
+    
+    
+
+    float offset = 2.0f / _ShadowMap_Precision;
+    float light01Depth = shadowMap.Sample(shadowMapSamplerState, uv_Light).r;
+    float shadow = step(pos_LightNDC.z, light01Depth + 0.00001);
+
+
+    
     return shadow;
 }
